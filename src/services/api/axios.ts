@@ -12,9 +12,6 @@ interface RetryConfig extends InternalAxiosRequestConfig {
 
 export const apiClient = axios.create({
     baseURL: ENV.API_BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
     withCredentials: true,
 });
 
