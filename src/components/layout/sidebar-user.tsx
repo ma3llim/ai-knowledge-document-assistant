@@ -17,10 +17,10 @@ export function SidebarUser() {
     }
 
     const handleLogout = async () => {
+        dispatch(clearAuth());
         try {
             await logout();
         } finally {
-            dispatch(clearAuth());
             navigate("/login", { replace: true });
         }
     };
