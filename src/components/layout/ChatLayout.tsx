@@ -1,19 +1,16 @@
-import Sidebar from "@/components/layout/Sidebar";
-import Header from "./Header";
+import { Outlet } from "react-router-dom";
+import { SidebarInset, SidebarProvider } from "../ui/sidebar";
+import { AppSidebar } from "./Sidebar";
 
 const ChatLayout = () => {
     return (
-        <div className="flex h-screen overflow-hidden bg-background">
-            <Sidebar />
+        <SidebarProvider>
+            <AppSidebar />
 
-            <div className="flex min-w-0 flex-1 flex-col">
-                <Header />
-
-                <main className="flex min-h-0 flex-1 items-center justify-center">
-                    <p className="text-sm text-muted-foreground">Chat coming soon...</p>
-                </main>
-            </div>
-        </div>
+            <SidebarInset>
+                <Outlet />
+            </SidebarInset>
+        </SidebarProvider>
     );
 };
 

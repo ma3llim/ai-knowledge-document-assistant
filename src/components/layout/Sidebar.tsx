@@ -1,33 +1,127 @@
-import { FiMenu, FiPlus, FiMessageSquare } from "react-icons/fi";
+"use client";
 
-const Sidebar = () => {
-    return (
-        <aside className="flex w-64 shrink-0 flex-col border-r bg-muted/20">
-            <div className="flex h-14 items-center justify-between px-3">
-                <span className="text-sm font-semibold">Chats</span>
+import * as React from "react";
 
-                <button type="button" className="rounded-md p-2 transition-colors hover:bg-muted">
-                    <FiMenu className="h-4 w-4" />
-                </button>
-            </div>
-
-            <div className="px-3">
-                <button type="button" className="flex h-10 w-full items-center gap-2 rounded-lg border px-3 text-sm transition-colors hover:bg-muted">
-                    <FiPlus className="h-4 w-4" />
-                    New chat
-                </button>
-            </div>
-
-            <div className="mt-4 flex-1 px-3">
-                <p className="px-2 text-xs font-medium text-muted-foreground">Recent</p>
-
-                <button type="button" className="mt-2 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-muted">
-                    <FiMessageSquare className="h-4 w-4 shrink-0" />
-                    <span className="truncate">Welcome conversation</span>
-                </button>
-            </div>
-        </aside>
-    );
+import { NavWorkspaces } from "@/components/nav-workspaces";
+import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar";
+// This is sample data.
+const data = {
+    workspaces: [
+        {
+            name: "Personal Life Management",
+            emoji: "🏠",
+            pages: [
+                {
+                    name: "Daily Journal & Reflection",
+                    url: "#",
+                    emoji: "📔",
+                },
+                {
+                    name: "Health & Wellness Tracker",
+                    url: "#",
+                    emoji: "🍏",
+                },
+                {
+                    name: "Personal Growth & Learning Goals",
+                    url: "#",
+                    emoji: "🌟",
+                },
+            ],
+        },
+        {
+            name: "Professional Development",
+            emoji: "💼",
+            pages: [
+                {
+                    name: "Career Objectives & Milestones",
+                    url: "#",
+                    emoji: "🎯",
+                },
+                {
+                    name: "Skill Acquisition & Training Log",
+                    url: "#",
+                    emoji: "🧠",
+                },
+                {
+                    name: "Networking Contacts & Events",
+                    url: "#",
+                    emoji: "🤝",
+                },
+            ],
+        },
+        {
+            name: "Creative Projects",
+            emoji: "🎨",
+            pages: [
+                {
+                    name: "Writing Ideas & Story Outlines",
+                    url: "#",
+                    emoji: "✍️",
+                },
+                {
+                    name: "Art & Design Portfolio",
+                    url: "#",
+                    emoji: "🖼️",
+                },
+                {
+                    name: "Music Composition & Practice Log",
+                    url: "#",
+                    emoji: "🎵",
+                },
+            ],
+        },
+        {
+            name: "Home Management",
+            emoji: "🏡",
+            pages: [
+                {
+                    name: "Household Budget & Expense Tracking",
+                    url: "#",
+                    emoji: "💰",
+                },
+                {
+                    name: "Home Maintenance Schedule & Tasks",
+                    url: "#",
+                    emoji: "🔧",
+                },
+                {
+                    name: "Family Calendar & Event Planning",
+                    url: "#",
+                    emoji: "📅",
+                },
+            ],
+        },
+        {
+            name: "Travel & Adventure",
+            emoji: "🧳",
+            pages: [
+                {
+                    name: "Trip Planning & Itineraries",
+                    url: "#",
+                    emoji: "🗺️",
+                },
+                {
+                    name: "Travel Bucket List & Inspiration",
+                    url: "#",
+                    emoji: "🌎",
+                },
+                {
+                    name: "Travel Journal & Photo Gallery",
+                    url: "#",
+                    emoji: "📸",
+                },
+            ],
+        },
+    ],
 };
 
-export default Sidebar;
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    return (
+        <Sidebar className="border-r-0" {...props}>
+            <SidebarContent>
+                <NavWorkspaces workspaces={data.workspaces} />
+            </SidebarContent>
+            <SidebarRail />
+        </Sidebar>
+    );
+}
