@@ -3,9 +3,21 @@
 import * as React from "react";
 
 import { NavWorkspaces } from "@/components/nav-workspaces";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarRail,
+} from "@/components/ui/sidebar";
 import { SidebarUser } from "./sidebar-user";
 import logo from "@/assets/logo.png";
+import { FiBookOpen, FiPlus } from "react-icons/fi";
 
 // This is sample data.
 const data = {
@@ -128,6 +140,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
             </SidebarHeader>
             <SidebarContent>
+                <SidebarGroup>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton className="[&>svg]:size-5!">
+                                    <FiPlus />
+                                    <span>New Chat</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+
+                            <SidebarMenuItem>
+                                <SidebarMenuButton className="[&>svg]:size-5!">
+                                    <FiBookOpen />
+                                    <span>Library</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
                 <NavWorkspaces workspaces={data.workspaces} />
             </SidebarContent>
 
