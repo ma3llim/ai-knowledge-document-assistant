@@ -18,6 +18,7 @@ import {
 import { SidebarUser } from "./sidebar-user";
 import logo from "@/assets/logo.png";
 import { FiBookOpen, FiPlus } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 // This is sample data.
 const data = {
@@ -131,6 +132,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const navigate = useNavigate();
     return (
         <Sidebar className="border-r-0" {...props}>
             <SidebarHeader>
@@ -151,7 +153,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             </SidebarMenuItem>
 
                             <SidebarMenuItem>
-                                <SidebarMenuButton className="[&>svg]:size-5!">
+                                <SidebarMenuButton className="[&>svg]:size-5!" onClick={() => navigate("/library")}>
                                     <FiBookOpen />
                                     <span>Library</span>
                                 </SidebarMenuButton>
