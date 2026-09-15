@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { exchangeOAuthCode } from "@/services/api/authApi";
 import { setAuth } from "@/store/authSlice";
 import type { AppDispatch } from "@/store";
+import { toast } from "sonner";
 
 const OAuthCallback = () => {
     const [searchParams] = useSearchParams();
@@ -21,6 +22,10 @@ const OAuthCallback = () => {
             try {
                 const authData = await exchangeOAuthCode({ code });
                 dispatch(setAuth(authData));
+
+                toast.success("Login successful", {
+                    description: `Welcome back, ${authData.user.name}!`,
+                });
 
                 navigate("/chat", { replace: true });
             } catch {

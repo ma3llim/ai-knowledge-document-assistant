@@ -1,4 +1,4 @@
-import { ENV } from "@/config.env";
+import { ENV } from "@/config/env";
 import { AUTH_ENDPOINTS } from "@/constants/auth";
 import { store } from "@/store";
 import { clearAuth, setAuth } from "@/store/authSlice";

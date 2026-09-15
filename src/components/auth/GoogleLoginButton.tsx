@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ENV } from "@/config.env";
+import { ENV } from "@/config/env";
 import { AUTH_ENDPOINTS } from "@/constants/auth";
 import { FcGoogle } from "react-icons/fc";
 

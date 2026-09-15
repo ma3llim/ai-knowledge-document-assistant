@@ -18,6 +18,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AlertDialog } from "@base-ui/react";
+import { toast } from "sonner";
 
 const Library = () => {
     const [page, setPage] = useState(0);
@@ -47,6 +48,8 @@ const Library = () => {
 
             // Close confirmation dialog
             setDocumentToDelete(null);
+
+            toast.success("Document deleted successfully");
 
             // Refresh document list
             await queryClient.invalidateQueries({

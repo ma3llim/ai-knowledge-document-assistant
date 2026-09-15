@@ -146,7 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <SidebarMenuButton className="[&>svg]:size-5!">
+                                <SidebarMenuButton className="[&>svg]:size-5!" onClick={() => navigate("/chat")}>
                                     <FiPlus />
                                     <span>New Chat</span>
                                 </SidebarMenuButton>
