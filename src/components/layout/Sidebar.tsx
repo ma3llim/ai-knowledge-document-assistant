@@ -3,8 +3,10 @@
 import * as React from "react";
 
 import { NavWorkspaces } from "@/components/nav-workspaces";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import { SidebarUser } from "./sidebar-user";
+import logo from "@/assets/logo.png";
+
 // This is sample data.
 const data = {
     workspaces: [
@@ -119,6 +121,12 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar className="border-r-0" {...props}>
+            <SidebarHeader>
+                <div className="flex h-10 items-center gap-2 px-2">
+                    <img src={logo} alt="AI Knowledge" className="size-10 object-contain" />
+                    <span className="font-semibold tracking-tight">AI Knowledge</span>
+                </div>
+            </SidebarHeader>
             <SidebarContent>
                 <NavWorkspaces workspaces={data.workspaces} />
             </SidebarContent>
