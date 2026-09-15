@@ -2,7 +2,7 @@ export interface User {
     id: string;
     name: string;
     email: string;
-    picture?: string;
+    profileImageUrl?: string;
 }
 export interface AuthData {
     accessToken: string;

@@ -3,7 +3,8 @@
 import * as React from "react";
 
 import { NavWorkspaces } from "@/components/nav-workspaces";
-import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarRail } from "@/components/ui/sidebar";
+import { SidebarUser } from "./sidebar-user";
 // This is sample data.
 const data = {
     workspaces: [
@@ -121,6 +122,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent>
                 <NavWorkspaces workspaces={data.workspaces} />
             </SidebarContent>
+
+            <SidebarFooter>
+                <SidebarUser />
+            </SidebarFooter>
+
             <SidebarRail />
         </Sidebar>
     );
