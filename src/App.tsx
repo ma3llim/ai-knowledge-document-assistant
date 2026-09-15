@@ -1,9 +1,7 @@
+import { AppRoutes } from "./routes";
+
 const App = () => {
-    return (
-        <div className="flex min-h-screen items-center justify-center bg-black">
-            <h1 className="text-4xl font-bold text-white">AI Knowledge & Document Assistant</h1>
-        </div>
-    );
+    return <AppRoutes />;
 };
 
 export default App;

@@ -7,3 +7,5 @@ type AppRouterProps = {
 export function AppRouter({ children }: AppRouterProps) {
     return <BrowserRouter>{children}</BrowserRouter>;
 }
+
+export { default as AppRoutes } from "./AppRoutes";
