@@ -19,7 +19,6 @@ const ChatConversation = () => {
         conversationId,
         onConversationCreated: setConversationId,
     });
-    console.log(data);
 
     const handleBack = () => {
         chatWebSocket.disconnect();
