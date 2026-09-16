@@ -11,25 +11,22 @@ const Chat = () => {
 
     return (
         <>
-            <header className="flex h-14 shrink-0 items-center gap-2">
-                <div className="flex flex-1 items-center gap-2 px-3">
+            <header className="flex h-14 shrink-0 items-center">
+                <div className="flex w-full items-center gap-3 px-4">
                     <SidebarTrigger />
+                    <Separator orientation="vertical" className="h-5 w-px shrink-0 bg-border" />
 
-                    <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-
-                    {selectedConversation && (
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage className="line-clamp-1">{selectedConversation.title}</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    )}
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbPage className="line-clamp-1">Manage Library</BreadcrumbPage>
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </div>
             </header>
 
-            <main className="flex flex-1 flex-col container mx-auto">
+            <main className="flex flex-1 flex-col">
                 <h1>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea laboriosam, perferendis voluptatum consequuntur placeat sint! Ullam
                     consequatur ducimus delectus amet maxime nihil iusto? Beatae, fuga vel error odio reiciendis sit.

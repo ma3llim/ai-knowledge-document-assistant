@@ -17,8 +17,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { AlertDialog } from "@base-ui/react";
+import { AlertDialog, Separator } from "@base-ui/react";
 import { toast } from "sonner";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb";
 
 const Library = () => {
     const [page, setPage] = useState(0);
@@ -46,12 +48,10 @@ const Library = () => {
         try {
             await deleteDocument(documentToDelete.id);
 
-            // Close confirmation dialog
             setDocumentToDelete(null);
 
             toast.success("Document deleted successfully");
 
-            // Refresh document list
             await queryClient.invalidateQueries({
                 queryKey: ["documents"],
             });
@@ -62,6 +62,20 @@ const Library = () => {
 
     return (
         <>
+            <header className="flex h-14 shrink-0 items-center">
+                <div className="flex w-full items-center gap-3 px-4">
+                    <SidebarTrigger />
+                    <Separator orientation="vertical" className="h-5 w-px shrink-0 bg-border" />
+
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbPage className="line-clamp-1">Manage Library</BreadcrumbPage>
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
+                </div>
+            </header>
             <div className="flex min-h-svh flex-1 flex-col">
                 <header className="border-b">
                     <div className="flex items-center justify-between px-6 py-5">
