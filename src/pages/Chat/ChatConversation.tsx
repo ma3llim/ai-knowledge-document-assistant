@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
 import ChatHeader from "@/components/chat/ChatHeader";
 import ChatMessageList from "@/components/chat/ChatMessageList";
 import ChatInput from "@/components/chat/ChatInput";
@@ -13,68 +12,57 @@ const ChatConversation = () => {
     const navigate = useNavigate();
     const [conversationId, setConversationId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const { data: document, isLoading, isError } = useDocument(documentId!);
 
-    const { data: document, isLoading: isDocumentLoading, isError: isDocumentError } = useDocument(documentId!);
-
-    const { isConnected, isStreaming, streamingContent, citations, sendMessage } = useChatWebSocket({
-        documentId: documentId ?? null,
+    const { isConnected, disconnect, isStreaming, streamingContent, citations, sendMessage } = useChatWebSocket({
+        documentId: documentId ?? "",
         conversationId,
         onConversationCreated: setConversationId,
     });
 
-    useEffect(() => {
-        if (!documentId) {
-            navigate("/chat", { replace: true });
-        }
-    }, [documentId, navigate]);
+    const handleBack = () => {
+        disconnect();
 
-    useEffect(() => {
-        if (isDocumentError) {
-            navigate("/chat", { replace: true });
-        }
-    }, [isDocumentError, navigate]);
+        setConversationId(null);
+        setMessages([]);
 
-    if (isDocumentLoading) {
+        navigate("/chat");
+    };
+
+    if (isLoading) {
         return (
-            <div className="flex min-h-svh w-full items-center justify-center">
+            <div className="flex min-h-svh items-center justify-center">
                 <p className="text-sm text-muted-foreground">Loading document...</p>
             </div>
         );
     }
 
-    if (!document) {
-        return null;
+    if (isError || !document) {
+        return (
+            <div className="flex min-h-svh items-center justify-center">
+                <p className="text-sm text-muted-foreground">Document not found.</p>
+            </div>
+        );
     }
 
-    const handleSend = (content: string) => {
+    const handleSend = (userQuery: string) => {
+        // Add user message to UI
         setMessages((current) => [
             ...current,
             {
                 id: crypto.randomUUID(),
                 role: "user",
-                content,
+                content: userQuery,
             },
         ]);
 
-        sendMessage(content);
+        // Send to WebSocket
+        sendMessage(userQuery);
     };
 
     return (
         <div className="flex min-h-svh w-full flex-col">
-            <div className="flex items-center gap-2 border-b px-4 py-2">
-                <button
-                    type="button"
-                    onClick={() => navigate("/chat")}
-                    className="flex size-9 items-center justify-center rounded-lg transition hover:bg-muted"
-                    aria-label="Back to documents"
-                >
-                    <FiArrowLeft size={18} />
-                </button>
-
-                <span className="text-sm text-muted-foreground">Back to documents</span>
-            </div>
-
-            <ChatHeader documentName={document.data.originalFilename} isConnected={isConnected} />
+            <ChatHeader documentName={document.originalFilename} isConnected={isConnected} onBack={handleBack} />
 
             <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
 

@@ -1,7 +1,7 @@
 import { ChatWebSocket } from "@/services/websocket/chatWebSocket";
 import type { ChatCitation, ChatErrorData, ChatWebSocketEvent, ChatWebSocketRequest } from "@/services/websocket/types";
 import type { RootState } from "@/store";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -154,19 +154,6 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
         },
         [conversationId, documentId, user?.id],
     );
-
-    useEffect(() => {
-        if (!accessToken) {
-            disconnect();
-            return;
-        }
-
-        connect();
-
-        return () => {
-            disconnect();
-        };
-    }, [accessToken, connect, disconnect]);
 
     return {
         isConnected,

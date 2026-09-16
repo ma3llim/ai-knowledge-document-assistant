@@ -47,11 +47,18 @@ export class ChatWebSocket {
             }
         };
 
-        this.socket.onerror = () => {
+        this.socket.onerror = (event) => {
+            console.error("WebSocket error:", event);
             this.errorHandler?.();
         };
 
-        this.socket.onclose = () => {
+        this.socket.onclose = (event) => {
+            console.log("WebSocket closed:", {
+                code: event.code,
+                reason: event.reason,
+                wasClean: event.wasClean,
+            });
+
             this.closeHandler?.();
         };
     }
