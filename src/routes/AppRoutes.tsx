@@ -1,5 +1,6 @@
 import Loader from "@/components/common/Loader";
 import ChatLayout from "@/layouts/ChatLayout";
+import ChatConversation from "@/pages/Chat/ChatConversation";
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 const Home = lazy(() => import("@/pages/Home"));
@@ -20,6 +21,7 @@ const AppRoutes = () => {
                     <Route path="/oauth/failure" element={<OAuthFailure />} />
                     <Route element={<ChatLayout />}>
                         <Route path="/chat" element={<Chat />} />
+                        <Route path="/chat/:documentId" element={<ChatConversation />} />
                         <Route path="/library" element={<Library />} />
                     </Route>
                 </Routes>
