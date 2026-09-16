@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FiCheck, FiFileText } from "react-icons/fi";
-
 import { useDocuments } from "@/hooks/useDocuments";
 import type { Document } from "@/types/document";
+import type { RootState } from "@/store";
+import { chatWebSocket } from "@/services/websocket/chatWebSocket";
 
 const DocumentSelector = () => {
     const navigate = useNavigate();
+    const accessToken = useSelector((state: RootState) => state.auth.accessToken);
     const { data, isLoading } = useDocuments(0, 12);
     const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
     const documents = data?.content ?? [];
@@ -15,6 +18,13 @@ const DocumentSelector = () => {
         if (!selectedDocument) {
             return;
         }
+
+        if (!accessToken) {
+            return;
+        }
+
+        chatWebSocket.connect(accessToken);
+
         navigate(`/chat/${selectedDocument.id}`);
     };
 

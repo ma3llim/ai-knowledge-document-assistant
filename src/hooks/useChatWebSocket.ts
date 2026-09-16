@@ -1,19 +1,19 @@
-import { ChatWebSocket } from "@/services/websocket/chatWebSocket";
-import type { ChatCitation, ChatErrorData, ChatWebSocketEvent, ChatWebSocketRequest } from "@/services/websocket/types";
-import type { RootState } from "@/store";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import { chatWebSocket } from "@/services/websocket/chatWebSocket";
+import type { ChatCitation, ChatErrorData, ChatWebSocketEvent, ChatWebSocketRequest } from "@/services/websocket/types";
+import type { RootState } from "@/store";
 
 interface UseChatWebSocketOptions {
     documentId: string | null;
     conversationId: string | null;
     onConversationCreated?: (conversationId: string) => void;
 }
+
 export const useChatWebSocket = ({ documentId, conversationId, onConversationCreated }: UseChatWebSocketOptions) => {
     const { accessToken, user } = useSelector((state: RootState) => state.auth);
-    const webSocketRef = useRef<ChatWebSocket | null>(null);
-    const [isConnected, setIsConnected] = useState(false);
+    const [isConnected, setIsConnected] = useState(chatWebSocket.isConnected);
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState("");
     const [citations, setCitations] = useState<ChatCitation[]>([]);
@@ -29,7 +29,12 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                     const data = event.data;
 
                     if (data && typeof data === "object" && "conversationId" in data) {
-                        const newConversationId = (data as { conversationId?: string }).conversationId;
+                        const newConversationId = (
+                            data as {
+                                conversationId?: string;
+                            }
+                        ).conversationId;
+
                         if (newConversationId) {
                             onConversationCreated?.(newConversationId);
                         }
@@ -76,46 +81,52 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
         [onConversationCreated],
     );
 
+    useEffect(() => {
+        const unsubscribeMessage = chatWebSocket.subscribeMessage(handleMessage);
+        const unsubscribeOpen = chatWebSocket.subscribeOpen(() => {
+            setIsConnected(true);
+        });
+        const unsubscribeClose = chatWebSocket.subscribeClose(() => {
+            setIsConnected(false);
+            setIsStreaming(false);
+        });
+        const unsubscribeError = chatWebSocket.subscribeError(() => {
+            setIsConnected(false);
+            setIsStreaming(false);
+
+            toast.error("Unable to connect to chat server");
+        });
+        setIsConnected(chatWebSocket.isConnected);
+
+        return () => {
+            unsubscribeMessage();
+            unsubscribeOpen();
+            unsubscribeClose();
+            unsubscribeError();
+        };
+    }, [handleMessage]);
+
     const connect = useCallback(() => {
         if (!accessToken) {
+            toast.error("Authentication required");
             return;
         }
 
-        if (webSocketRef.current?.isConnected) {
+        if (chatWebSocket.isConnected) {
+            setIsConnected(true);
             return;
         }
 
-        const webSocket = new ChatWebSocket();
-
-        webSocketRef.current = webSocket;
-
-        webSocket.connect(accessToken, {
-            onMessage: handleMessage,
-
-            onOpen: () => {
-                setIsConnected(true);
-            },
-
-            onClose: () => {
-                setIsConnected(false);
-                setIsStreaming(false);
-            },
-
-            onError: () => {
-                setIsConnected(false);
-                setIsStreaming(false);
-
-                toast.error("Unable to connect to chat server");
-            },
-        });
-    }, [accessToken, handleMessage]);
+        chatWebSocket.connect(accessToken);
+    }, [accessToken]);
 
     const disconnect = useCallback(() => {
-        webSocketRef.current?.disconnect();
-        webSocketRef.current = null;
+        chatWebSocket.disconnect();
 
         setIsConnected(false);
         setIsStreaming(false);
+        setStreamingContent("");
+        setCitations([]);
     }, []);
 
     const sendMessage = useCallback(
@@ -130,8 +141,14 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                 return;
             }
 
-            if (!webSocketRef.current?.isConnected) {
+            if (!chatWebSocket.isConnected) {
                 toast.error("Chat connection is not ready");
+                return;
+            }
+
+            const trimmedQuery = userQuery.trim();
+
+            if (!trimmedQuery) {
                 return;
             }
 
@@ -139,14 +156,10 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                 documentId,
                 userId: user.id,
                 conversationId,
-                userQuery: userQuery.trim(),
+                userQuery: trimmedQuery,
             };
 
-            if (!request.userQuery) {
-                return;
-            }
-
-            webSocketRef.current.send(request);
+            chatWebSocket.send(request);
 
             setIsStreaming(true);
             setStreamingContent("");

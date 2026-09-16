@@ -5,51 +5,45 @@ const WS_BASE_URL = "ws://localhost:8080/ws/chat";
 type MessageHandler = (event: ChatWebSocketEvent) => void;
 type ConnectionHandler = () => void;
 
-export class ChatWebSocket {
+class ChatWebSocket {
     private socket: WebSocket | null = null;
 
-    private messageHandler: MessageHandler | null = null;
-    private openHandler: ConnectionHandler | null = null;
-    private closeHandler: ConnectionHandler | null = null;
-    private errorHandler: ConnectionHandler | null = null;
+    private messageHandlers = new Set<MessageHandler>();
+    private openHandlers = new Set<ConnectionHandler>();
+    private closeHandlers = new Set<ConnectionHandler>();
+    private errorHandlers = new Set<ConnectionHandler>();
 
-    connect(
-        accessToken: string,
-        handlers: {
-            onMessage: MessageHandler;
-            onOpen?: ConnectionHandler;
-            onClose?: ConnectionHandler;
-            onError?: ConnectionHandler;
-        },
-    ) {
-        this.disconnect();
+    connect(accessToken: string): void {
+        if (!accessToken) {
+            return;
+        }
 
-        this.messageHandler = handlers.onMessage;
-        this.openHandler = handlers.onOpen ?? null;
-        this.closeHandler = handlers.onClose ?? null;
-        this.errorHandler = handlers.onError ?? null;
+        if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
+            return;
+        }
 
         const url = `${WS_BASE_URL}?token=${encodeURIComponent(accessToken)}`;
 
         this.socket = new WebSocket(url);
 
         this.socket.onopen = () => {
-            this.openHandler?.();
+            this.notifyOpen();
         };
 
         this.socket.onmessage = (event) => {
             try {
                 const parsedEvent = JSON.parse(event.data) as ChatWebSocketEvent;
 
-                this.messageHandler?.(parsedEvent);
+                this.notifyMessage(parsedEvent);
             } catch (error) {
                 console.error("Failed to parse WebSocket message:", error);
+                this.notifyError();
             }
         };
 
         this.socket.onerror = (event) => {
             console.error("WebSocket error:", event);
-            this.errorHandler?.();
+            this.notifyError();
         };
 
         this.socket.onclose = (event) => {
@@ -59,11 +53,12 @@ export class ChatWebSocket {
                 wasClean: event.wasClean,
             });
 
-            this.closeHandler?.();
+            this.socket = null;
+            this.notifyClose();
         };
     }
 
-    send(request: ChatWebSocketRequest) {
+    send(request: ChatWebSocketRequest): void {
         if (!this.socket) {
             throw new Error("WebSocket is not initialized");
         }
@@ -75,19 +70,68 @@ export class ChatWebSocket {
         this.socket.send(JSON.stringify(request));
     }
 
-    disconnect() {
+    disconnect(): void {
         if (this.socket) {
             this.socket.close();
             this.socket = null;
         }
-
-        this.messageHandler = null;
-        this.openHandler = null;
-        this.closeHandler = null;
-        this.errorHandler = null;
     }
 
-    get isConnected() {
+    subscribeMessage(handler: MessageHandler): () => void {
+        this.messageHandlers.add(handler);
+        return () => {
+            this.messageHandlers.delete(handler);
+        };
+    }
+
+    subscribeOpen(handler: ConnectionHandler): () => void {
+        this.openHandlers.add(handler);
+        return () => {
+            this.openHandlers.delete(handler);
+        };
+    }
+
+    subscribeClose(handler: ConnectionHandler): () => void {
+        this.closeHandlers.add(handler);
+        return () => {
+            this.closeHandlers.delete(handler);
+        };
+    }
+
+    subscribeError(handler: ConnectionHandler): () => void {
+        this.errorHandlers.add(handler);
+        return () => {
+            this.errorHandlers.delete(handler);
+        };
+    }
+
+    get isConnected(): boolean {
         return this.socket?.readyState === WebSocket.OPEN;
     }
+
+    private notifyMessage(event: ChatWebSocketEvent): void {
+        this.messageHandlers.forEach((handler) => {
+            handler(event);
+        });
+    }
+
+    private notifyOpen(): void {
+        this.openHandlers.forEach((handler) => {
+            handler();
+        });
+    }
+
+    private notifyClose(): void {
+        this.closeHandlers.forEach((handler) => {
+            handler();
+        });
+    }
+
+    private notifyError(): void {
+        this.errorHandlers.forEach((handler) => {
+            handler();
+        });
+    }
 }
+
+export const chatWebSocket = new ChatWebSocket();

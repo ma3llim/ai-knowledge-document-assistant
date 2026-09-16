@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
 import { getDocument, getDocuments, uploadDocument } from "@/services/api/documentApi";
 
 export const useDocuments = (page = 0, size = 12) => {

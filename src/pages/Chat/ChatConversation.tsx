@@ -4,24 +4,25 @@ import ChatHeader from "@/components/chat/ChatHeader";
 import ChatMessageList from "@/components/chat/ChatMessageList";
 import ChatInput from "@/components/chat/ChatInput";
 import { useChatWebSocket } from "@/hooks/useChatWebSocket";
-import type { ChatMessage } from "@/services/websocket/types";
 import { useDocument } from "@/hooks/useDocuments";
+import { chatWebSocket } from "@/services/websocket/chatWebSocket";
+import type { ChatMessage } from "@/services/websocket/types";
 
 const ChatConversation = () => {
     const { documentId } = useParams();
     const navigate = useNavigate();
     const [conversationId, setConversationId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const { data: document, isLoading, isError } = useDocument(documentId!);
-
-    const { isConnected, disconnect, isStreaming, streamingContent, citations, sendMessage } = useChatWebSocket({
-        documentId: documentId ?? "",
+    const { data, isLoading, isError } = useDocument(documentId!);
+    const { isConnected, isStreaming, streamingContent, citations, sendMessage } = useChatWebSocket({
+        documentId: documentId ?? null,
         conversationId,
         onConversationCreated: setConversationId,
     });
+    console.log(data);
 
     const handleBack = () => {
-        disconnect();
+        chatWebSocket.disconnect();
 
         setConversationId(null);
         setMessages([]);
@@ -46,7 +47,6 @@ const ChatConversation = () => {
     }
 
     const handleSend = (userQuery: string) => {
-        // Add user message to UI
         setMessages((current) => [
             ...current,
             {
@@ -56,16 +56,13 @@ const ChatConversation = () => {
             },
         ]);
 
-        // Send to WebSocket
         sendMessage(userQuery);
     };
 
     return (
         <div className="flex min-h-svh w-full flex-col">
-            <ChatHeader documentName={document.originalFilename} isConnected={isConnected} onBack={handleBack} />
-
+            <ChatHeader documentName={data?.data?.originalFilename!} isConnected={isConnected} onBack={handleBack} />
             <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
-
             <ChatInput disabled={!isConnected || isStreaming} onSend={handleSend} />
         </div>
     );
