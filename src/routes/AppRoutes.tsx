@@ -22,6 +22,7 @@ const AppRoutes = () => {
                     <Route element={<ChatLayout />}>
                         <Route path="/chat" element={<Chat />} />
                         <Route path="/chat/:documentId" element={<ChatConversation />} />
+                        <Route path="/chat/:documentId/:conversationId" element={<ChatConversation />} />
                         <Route path="/library" element={<Library />} />
                     </Route>
                 </Routes>
