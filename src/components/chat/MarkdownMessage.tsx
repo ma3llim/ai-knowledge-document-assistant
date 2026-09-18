@@ -13,7 +13,7 @@ const MarkdownMessage = ({ content, isStreaming = false }: MarkdownMessageProps)
             className="
                 prose
                 prose-invert
-                prose-base
+                prose-lg
                 max-w-none
                 prose-p:text-[#e8e5df]
                 prose-p:leading-7
