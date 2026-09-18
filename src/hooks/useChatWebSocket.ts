@@ -1,22 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { chatWebSocket } from "@/services/websocket/chatWebSocket";
-import type { ChatCitation, ChatErrorData, ChatWebSocketEvent, ChatWebSocketRequest } from "@/services/websocket/types";
+import type { ChatErrorData, ChatWebSocketEvent, ChatWebSocketRequest } from "@/services/websocket/types";
 import type { RootState } from "@/store";
 
 interface UseChatWebSocketOptions {
     documentId: string | null;
     conversationId: string | null;
     onConversationCreated?: (conversationId: string) => void;
+    onMessageComplete?: (content: string) => void;
 }
 
-export const useChatWebSocket = ({ documentId, conversationId, onConversationCreated }: UseChatWebSocketOptions) => {
+export const useChatWebSocket = ({ documentId, conversationId, onConversationCreated, onMessageComplete }: UseChatWebSocketOptions) => {
     const { accessToken, user } = useSelector((state: RootState) => state.auth);
     const [isConnected, setIsConnected] = useState(chatWebSocket.isConnected);
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState("");
-    const [citations, setCitations] = useState<ChatCitation[]>([]);
+    const streamingContentRef = useRef("");
 
     const handleMessage = useCallback(
         (event: ChatWebSocketEvent) => {
@@ -24,7 +25,6 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                 case "START": {
                     setIsStreaming(true);
                     setStreamingContent("");
-                    setCitations([]);
 
                     const data = event.data;
 
@@ -45,21 +45,22 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
 
                 case "CONTENT": {
                     if (typeof event.data === "string") {
-                        setStreamingContent((current) => current + event.data);
-                    }
-
-                    break;
-                }
-
-                case "CITATIONS": {
-                    if (Array.isArray(event.data)) {
-                        setCitations(event.data as ChatCitation[]);
+                        streamingContentRef.current += event.data;
+                        setStreamingContent(streamingContentRef.current);
                     }
 
                     break;
                 }
 
                 case "COMPLETE": {
+                    const completedContent = streamingContentRef.current;
+
+                    if (completedContent) {
+                        onMessageComplete?.(completedContent);
+                    }
+
+                    streamingContentRef.current = "";
+                    setStreamingContent("");
                     setIsStreaming(false);
                     break;
                 }
@@ -104,7 +105,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
             unsubscribeClose();
             unsubscribeError();
         };
-    }, [handleMessage]);
+    }, [handleMessage, onConversationCreated]);
 
     const connect = useCallback(() => {
         if (!accessToken) {
@@ -126,7 +127,6 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
         setIsConnected(false);
         setIsStreaming(false);
         setStreamingContent("");
-        setCitations([]);
     }, []);
 
     const sendMessage = useCallback(
@@ -163,7 +163,6 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
 
             setIsStreaming(true);
             setStreamingContent("");
-            setCitations([]);
         },
         [conversationId, documentId, user?.id],
     );
@@ -172,7 +171,6 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
         isConnected,
         isStreaming,
         streamingContent,
-        citations,
         connect,
         disconnect,
         sendMessage,

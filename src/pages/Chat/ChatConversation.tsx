@@ -11,13 +11,25 @@ import type { ChatMessage } from "@/services/websocket/types";
 const ChatConversation = () => {
     const { documentId } = useParams();
     const navigate = useNavigate();
+
     const [conversationId, setConversationId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const { data, isLoading, isError } = useDocument(documentId!);
-    const { isConnected, isStreaming, streamingContent, citations, sendMessage } = useChatWebSocket({
+
+    const { isConnected, isStreaming, streamingContent, sendMessage } = useChatWebSocket({
         documentId: documentId ?? null,
         conversationId,
         onConversationCreated: setConversationId,
+        onMessageComplete: (content) => {
+            setMessages((current) => [
+                ...current,
+                {
+                    id: crypto.randomUUID(),
+                    role: "assistant",
+                    content,
+                },
+            ]);
+        },
     });
 
     const handleBack = () => {

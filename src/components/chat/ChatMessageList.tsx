@@ -1,5 +1,4 @@
 import type { ChatMessage } from "@/services/websocket/types";
-import { FiFileText } from "react-icons/fi";
 
 interface ChatMessageListProps {
     messages: ChatMessage[];
@@ -24,25 +23,6 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessag
                                 }
                             >
                                 <p className="whitespace-pre-wrap">{message.content}</p>
-
-                                {!isUser && message.citations && message.citations.length > 0 && (
-                                    <div className="mt-4 border-t pt-3">
-                                        <p className="mb-2 text-xs font-medium text-muted-foreground">Sources</p>
-
-                                        <div className="flex flex-wrap gap-2">
-                                            {message.citations.map((citation, index) => (
-                                                <div
-                                                    key={`${citation.fileName}-${index}`}
-                                                    className="flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs text-muted-foreground"
-                                                >
-                                                    <FiFileText size={13} />
-
-                                                    {citation.fileName}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     );
