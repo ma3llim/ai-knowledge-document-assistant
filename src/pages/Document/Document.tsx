@@ -8,8 +8,7 @@ import DocumentStatus from "@/components/library/DocumentStatus";
 const Document = () => {
     const { documentId } = useParams();
     const navigate = useNavigate();
-
-    const { data: document, isLoading, isError } = useDocument(documentId ?? "");
+    const { data, isLoading, isError } = useDocument(documentId ?? "");
 
     if (isLoading) {
         return (
@@ -18,6 +17,7 @@ const Document = () => {
             </main>
         );
     }
+    const document = data?.data;
 
     if (isError || !document) {
         return (

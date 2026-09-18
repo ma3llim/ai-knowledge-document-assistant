@@ -8,6 +8,7 @@ export interface Document {
     fileType: DocumentFileType;
     fileSize: number;
     status: DocumentStatus;
+    failureReason: string;
     createdAt: string;
     updatedAt: string;
 }
