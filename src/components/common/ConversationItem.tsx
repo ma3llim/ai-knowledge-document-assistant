@@ -2,6 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { FiCheck, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { Conversation } from "@/types/conversation";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ConversationItemProps {
     conversation: Conversation;
@@ -123,17 +134,38 @@ export function ConversationItem({ conversation, isActive, onClick, onRename, on
                         <FiEdit2 className="h-4 w-4" />
                     </button>
 
-                    <button
-                        type="button"
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            handleDelete();
-                        }}
-                        className="flex h-7 w-7 items-center justify-center rounded-md text-destructive focus-visible:outline-none"
-                        aria-label="Delete conversation"
-                    >
-                        <FiTrash2 className="h-4 w-4" />
-                    </button>
+                    <AlertDialog>
+                        <AlertDialogTrigger
+                            type="button"
+                            onClick={(event) => event.stopPropagation()}
+                            className="flex h-7 w-7 items-center justify-center rounded-md text-destructive focus-visible:outline-none"
+                            aria-label="Delete conversation"
+                        >
+                            <FiTrash2 className="h-4 w-4" />
+                        </AlertDialogTrigger>
+
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Delete conversation?</AlertDialogTitle>
+
+                                <AlertDialogDescription>
+                                    Are you sure you want to delete <span className="font-medium text-foreground">"{conversation.title}"</span>? This
+                                    action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                                <AlertDialogAction
+                                    onClick={handleDelete}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                    Delete
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </SidebarMenuItem>

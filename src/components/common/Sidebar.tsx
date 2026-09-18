@@ -24,6 +24,7 @@ import logo from "@/assets/logo.png";
 import type { ConversationPage } from "@/types/conversation";
 import { deleteConversation, getConversations, updateConversationTitle } from "@/services/api/conversation";
 import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navigate = useNavigate();
@@ -84,58 +85,72 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     };
 
     const handleRenameConversation = async (selectedConversationId: string, title: string) => {
-        await updateConversationTitle(selectedConversationId, title);
+        try {
+            await updateConversationTitle(selectedConversationId, title);
 
-        queryClient.setQueryData<InfiniteData<ConversationPage>>(["conversations"], (currentData) => {
-            if (!currentData) {
-                return currentData;
-            }
+            queryClient.setQueryData<InfiniteData<ConversationPage>>(["conversations"], (currentData) => {
+                if (!currentData) {
+                    return currentData;
+                }
 
-            return {
-                ...currentData,
-                pages: currentData.pages.map((page) => ({
-                    ...page,
-                    content: page.content.map((conversation) =>
-                        conversation.conversationId === selectedConversationId
-                            ? {
-                                  ...conversation,
-                                  title,
-                              }
-                            : conversation,
-                    ),
-                })),
-            };
-        });
+                return {
+                    ...currentData,
+                    pages: currentData.pages.map((page) => ({
+                        ...page,
+                        content: page.content.map((conversation) =>
+                            conversation.conversationId === selectedConversationId
+                                ? {
+                                      ...conversation,
+                                      title,
+                                  }
+                                : conversation,
+                        ),
+                    })),
+                };
+            });
+
+            toast.success("Conversation renamed successfully.");
+        } catch (error) {
+            toast.error("Failed to rename conversation.");
+            throw error;
+        }
     };
 
     const handleDeleteConversation = async (deletedConversationId: string) => {
-        await deleteConversation(deletedConversationId);
+        try {
+            await deleteConversation(deletedConversationId);
 
-        queryClient.setQueryData<InfiniteData<ConversationPage>>(["conversations"], (currentData) => {
-            if (!currentData) {
-                return currentData;
+            queryClient.setQueryData<InfiniteData<ConversationPage>>(["conversations"], (currentData) => {
+                if (!currentData) {
+                    return currentData;
+                }
+
+                return {
+                    ...currentData,
+                    pages: currentData.pages.map((page) => {
+                        const conversationExists = page.content.some((conversation) => conversation.conversationId === deletedConversationId);
+
+                        if (!conversationExists) {
+                            return page;
+                        }
+
+                        return {
+                            ...page,
+                            content: page.content.filter((conversation) => conversation.conversationId !== deletedConversationId),
+                            totalElements: Math.max(0, page.totalElements - 1),
+                        };
+                    }),
+                };
+            });
+
+            toast.success("Conversation deleted successfully.");
+
+            if (deletedConversationId === conversationId) {
+                navigate("/chat");
             }
-
-            return {
-                ...currentData,
-                pages: currentData.pages.map((page) => {
-                    const conversationExists = page.content.some((conversation) => conversation.conversationId === deletedConversationId);
-
-                    if (!conversationExists) {
-                        return page;
-                    }
-
-                    return {
-                        ...page,
-                        content: page.content.filter((conversation) => conversation.conversationId !== deletedConversationId),
-                        totalElements: Math.max(0, page.totalElements - 1),
-                    };
-                }),
-            };
-        });
-
-        if (deletedConversationId === conversationId) {
-            navigate("/chat");
+        } catch (error) {
+            toast.error("Failed to delete conversation.");
+            throw error;
         }
     };
 
