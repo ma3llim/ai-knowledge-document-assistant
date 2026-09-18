@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { chatWebSocket } from "@/services/websocket/chatWebSocket";
 import type { ChatErrorData, ChatWebSocketEvent, ChatWebSocketRequest } from "@/services/websocket/types";
 import type { RootState } from "@/store";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UseChatWebSocketOptions {
     documentId: string | null;
@@ -18,6 +19,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState("");
     const streamingContentRef = useRef("");
+    const queryClient = useQueryClient();
 
     const handleMessage = useCallback(
         (event: ChatWebSocketEvent) => {
@@ -29,17 +31,14 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                     const data = event.data;
 
                     if (data && typeof data === "object" && "conversationId" in data) {
-                        const newConversationId = (
-                            data as {
-                                conversationId?: string;
-                            }
-                        ).conversationId;
+                        const { conversationId, newlyCreated } = data;
 
-                        if (newConversationId) {
-                            onConversationCreated?.(newConversationId);
+                        if (conversationId && newlyCreated) {
+                            queryClient.invalidateQueries({
+                                queryKey: ["conversations"],
+                            });
                         }
                     }
-
                     break;
                 }
 

@@ -8,7 +8,9 @@ export interface ChatWebSocketRequest {
 export type ChatWebSocketEventType = "START" | "CONTENT" | "COMPLETE" | "ERROR";
 
 export interface ChatStartData {
-    documentId: string;
+    conversationId: string;
+    newlyCreated: boolean;
+    conversationTitle: string;
 }
 
 export interface ChatStartEvent {
