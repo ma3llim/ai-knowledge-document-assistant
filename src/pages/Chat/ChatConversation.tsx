@@ -21,9 +21,6 @@ const ChatConversation = () => {
     const { data, isLoading, isError } = useDocument(documentId!);
     const navigate = useNavigate();
 
-    console.log("routeConversationId:", routeConversationId);
-    console.log("conversationId state:", conversationId);
-
     const { data: conversationMessageData, isLoading: messagesLoading } = useInfiniteQuery<MessagePage>({
         queryKey: ["conversation-messages", routeConversationId],
         enabled: !!routeConversationId,
@@ -132,13 +129,11 @@ const ChatConversation = () => {
     }
 
     return (
-        <main className="flex h-svh min-h-0 flex-1 flex-col overflow-hidden bg-[#0a0907]">
-            <header className="flex h-14 shrink-0 items-center border-b border-white/10">
+        <>
+            <header className="sticky top-0 z-50 flex h-14 w-full transition-all duration-300 items-center border-b border-white/10 bg-[#0a0907]">
                 <div className="flex w-full items-center gap-3 px-4">
                     <SidebarTrigger />
-
                     <Separator orientation="vertical" className="h-5 w-px shrink-0 bg-white/10" />
-
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem>
@@ -179,16 +174,13 @@ const ChatConversation = () => {
                 </div>
             </header>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                    <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
-                </div>
-
-                <div className="shrink-0">
-                    <ChatInput disabled={isStreaming} onSend={handleSend} />
-                </div>
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
             </div>
-        </main>
+            <div className="sticky bottom-0 z-50">
+                <ChatInput disabled={isStreaming} onSend={handleSend} />
+            </div>
+        </>
     );
 };
 
