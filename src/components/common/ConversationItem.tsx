@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FiCheck, FiMoreHorizontal, FiTrash2, FiEdit2 } from "react-icons/fi";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { FiCheck, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { Conversation } from "@/types/conversation";
 
@@ -106,44 +105,36 @@ export function ConversationItem({ conversation, isActive, onClick, onRename, on
 
     return (
         <SidebarMenuItem>
-            <div className="group flex w-full items-center">
-                <SidebarMenuButton isActive={isActive} onClick={onClick} tooltip={conversation.title} className="min-w-0 flex-1">
-                    <span className="block min-w-0 overflow-hidden whitespace-nowrap">{conversation.title}</span>
+            <div className="relative w-full rounded-md">
+                <SidebarMenuButton isActive={isActive} onClick={onClick} tooltip={conversation.title} className="group-hover:pr-16 w-full min-w-0">
+                    <span className="block min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{conversation.title}</span>
                 </SidebarMenuButton>
 
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <button
-                            type="button"
-                            onClick={(event) => event.stopPropagation()}
-                            className="
-                        flex h-8 w-8 shrink-0 items-center justify-center
-                        rounded-md
-                        opacity-0
-                        transition-opacity
-                        group-hover:opacity-100
-                        hover:bg-accent
-                        focus-visible:opacity-100
-                        focus-visible:outline-none
-                    "
-                            aria-label="Conversation options"
-                        >
-                            <FiMoreHorizontal className="h-4 w-4" />
-                        </button>
-                    </DropdownMenuTrigger>
+                <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2 items-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                    <button
+                        type="button"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            handleStartRename();
+                        }}
+                        className="flex h-7 w-7 items-center justify-center rounded-md focus-visible:outline-none"
+                        aria-label="Rename conversation"
+                    >
+                        <FiEdit2 className="h-4 w-4" />
+                    </button>
 
-                    <DropdownMenuContent align="end" side="bottom" sideOffset={4} className="w-36">
-                        <DropdownMenuItem onClick={handleStartRename}>
-                            <FiEdit2 className="mr-2 h-4 w-4" />
-                            Rename
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem onClick={handleDelete} className="text-destructive focus:text-destructive">
-                            <FiTrash2 className="mr-2 h-4 w-4" />
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                    <button
+                        type="button"
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            handleDelete();
+                        }}
+                        className="flex h-7 w-7 items-center justify-center rounded-md text-destructive focus-visible:outline-none"
+                        aria-label="Delete conversation"
+                    >
+                        <FiTrash2 className="h-4 w-4" />
+                    </button>
+                </div>
             </div>
         </SidebarMenuItem>
     );

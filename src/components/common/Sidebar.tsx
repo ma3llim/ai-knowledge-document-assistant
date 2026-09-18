@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { FiBookOpen, FiPlus } from "react-icons/fi";
 import {
     Sidebar,
@@ -20,44 +19,60 @@ import {
     SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { SidebarUser } from "./sidebar-user";
-import logo from "@/assets/logo.png";
-import type { RootState } from "@/store";
-import { chatWebSocket } from "@/services/websocket/chatWebSocket";
-import type { Conversation, ConversationPage } from "@/types/conversation";
-import type { PaginationRequest } from "@/types/api";
-import { deleteConversation, getConversations, updateConversationTitle } from "@/services/api/conversation";
 import { ConversationItem } from "./ConversationItem";
+import logo from "@/assets/logo.png";
+import type { ConversationPage } from "@/types/conversation";
+import { deleteConversation, getConversations, updateConversationTitle } from "@/services/api/conversation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navigate = useNavigate();
     const { conversationId } = useParams();
-    const userId = useSelector((state: RootState) => state.auth.user?.id);
     const queryClient = useQueryClient();
-    const [pagination, setPagination] = useState<PaginationRequest>({
-        page: 0,
-        size: 20,
-    });
 
     const {
         data: conversationData,
         isLoading: conversationsLoading,
         isError: conversationsError,
-    } = useQuery({
-        queryKey: ["conversations", pagination.page, pagination.size],
-        queryFn: () => getConversations(pagination.page, pagination.size),
-        placeholderData: (previousData) => previousData,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery({
+        queryKey: ["conversations"],
+        initialPageParam: 0,
+        queryFn: ({ pageParam }) => getConversations(pageParam, 20),
+        getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.page + 1),
     });
 
-    const conversations = Array.from(
-        new Map(
-            Array.from(
-                { length: pagination.page + 1 },
-                (_, page) => queryClient.getQueryData<ConversationPage>(["conversations", page, pagination.size])?.content ?? [],
-            )
-                .flat()
-                .map((conversation) => [conversation.conversationId, conversation]),
-        ).values(),
-    );
+    const conversations = conversationData?.pages.flatMap((page) => page.content) ?? [];
+
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const element = loadMoreRef.current;
+
+        if (!element || !hasNextPage) {
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const firstEntry = entries[0];
+
+                if (firstEntry.isIntersecting && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            {
+                rootMargin: "200px",
+            },
+        );
+
+        observer.observe(element);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const handleNewChat = () => {
         navigate("/chat");
@@ -67,29 +82,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         navigate(`/chat/${documentId}/${selectedConversationId}`);
     };
 
-    const handleLoadMore = () => {
-        if (!conversationData || conversationData.last) {
-            return;
-        }
-
-        setPagination((current) => ({
-            ...current,
-            page: current.page + 1,
-        }));
-    };
-
     const handleRenameConversation = async (selectedConversationId: string, title: string) => {
         await updateConversationTitle(selectedConversationId, title);
 
-        for (let page = 0; page <= pagination.page; page++) {
-            queryClient.setQueryData<ConversationPage>(["conversations", page, pagination.size], (currentData) => {
-                if (!currentData) {
-                    return currentData;
-                }
+        queryClient.setQueryData<InfiniteData<ConversationPage>>(["conversations"], (currentData) => {
+            if (!currentData) {
+                return currentData;
+            }
 
-                return {
-                    ...currentData,
-                    content: currentData.content.map((conversation) =>
+            return {
+                ...currentData,
+                pages: currentData.pages.map((page) => ({
+                    ...page,
+                    content: page.content.map((conversation) =>
                         conversation.conversationId === selectedConversationId
                             ? {
                                   ...conversation,
@@ -97,85 +102,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                               }
                             : conversation,
                     ),
-                };
-            });
-        }
+                })),
+            };
+        });
     };
 
     const handleDeleteConversation = async (deletedConversationId: string) => {
         await deleteConversation(deletedConversationId);
 
-        for (let page = 0; page <= pagination.page; page++) {
-            queryClient.setQueryData<ConversationPage>(["conversations", page, pagination.size], (currentData) => {
-                if (!currentData) {
-                    return currentData;
-                }
+        queryClient.setQueryData<InfiniteData<ConversationPage>>(["conversations"], (currentData) => {
+            if (!currentData) {
+                return currentData;
+            }
 
-                const conversationExists = currentData.content.some((conversation) => conversation.conversationId === deletedConversationId);
+            return {
+                ...currentData,
+                pages: currentData.pages.map((page) => {
+                    const conversationExists = page.content.some((conversation) => conversation.conversationId === deletedConversationId);
 
-                if (!conversationExists) {
-                    return currentData;
-                }
+                    if (!conversationExists) {
+                        return page;
+                    }
 
-                return {
-                    ...currentData,
-                    content: currentData.content.filter((conversation) => conversation.conversationId !== deletedConversationId),
-                    totalElements: Math.max(0, currentData.totalElements - 1),
-                };
-            });
-        }
+                    return {
+                        ...page,
+                        content: page.content.filter((conversation) => conversation.conversationId !== deletedConversationId),
+                        totalElements: Math.max(0, page.totalElements - 1),
+                    };
+                }),
+            };
+        });
 
         if (deletedConversationId === conversationId) {
             navigate("/chat");
         }
     };
-
-    /*
-     * When a new conversation is created through WebSocket,
-     * add it to the first page of the conversation list.
-     */
-    useEffect(() => {
-        const unsubscribe = chatWebSocket.subscribeMessage((event) => {
-            if (pagination.page !== 0 || event.type !== "START" || !event.newlyCreated) {
-                return;
-            }
-
-            queryClient.setQueryData<ConversationPage>(["conversations", 0, pagination.size], (currentData) => {
-                if (!currentData) {
-                    return currentData;
-                }
-
-                const alreadyExists = currentData.content.some((conversation) => conversation.conversationId === event.conversationId);
-
-                if (alreadyExists) {
-                    return currentData;
-                }
-
-                const now = new Date().toISOString();
-
-                const newConversation: Conversation = {
-                    conversationId: event.conversationId,
-                    documentId: event.data.documentId,
-                    title: event.conversationTitle,
-                    userId: userId!,
-                    createdAt: now,
-                    updatedAt: now,
-                };
-
-                return {
-                    ...currentData,
-                    content: [newConversation, ...currentData.content].slice(0, pagination.size),
-                    totalElements: currentData.totalElements + 1,
-                };
-            });
-        });
-
-        return unsubscribe;
-    }, [pagination.page, pagination.size, queryClient, userId]);
-
-    const hasMore = conversationData && !conversationData.last;
-
-    const loadingMore = pagination.page > 0 && conversationsLoading;
 
     return (
         <Sidebar className="border-r-0" {...props}>
@@ -192,14 +153,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
-                        <SidebarMenu>
+                        <SidebarMenu className="gap-0.5">
                             <SidebarMenuItem>
                                 <SidebarMenuButton className="[&>svg]:size-5!" onClick={handleNewChat}>
                                     <FiPlus />
                                     <span>New Chat</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-
                             <SidebarMenuItem>
                                 <SidebarMenuButton className="[&>svg]:size-5!" onClick={() => navigate("/library")}>
                                     <FiBookOpen />
@@ -214,16 +174,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                 <SidebarGroup>
                     <SidebarGroupLabel>Conversations</SidebarGroupLabel>
-
                     <SidebarGroupContent>
-                        <SidebarMenu>
-                            {conversationsLoading && pagination.page === 0 && (
+                        <SidebarMenu className="gap-0.5">
+                            {conversationsLoading && conversations.length === 0 && (
                                 <SidebarMenuItem>
                                     <div className="px-2 py-2 text-sm text-muted-foreground">Loading conversations...</div>
                                 </SidebarMenuItem>
                             )}
 
-                            {conversationsError && pagination.page === 0 && (
+                            {conversationsError && conversations.length === 0 && (
                                 <SidebarMenuItem>
                                     <div className="px-2 py-2 text-sm text-muted-foreground">Failed to load conversations.</div>
                                 </SidebarMenuItem>
@@ -247,17 +206,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 />
                             ))}
 
-                            {loadingMore && (
+                            {hasNextPage && (
                                 <SidebarMenuItem>
-                                    <div className="px-2 py-2 text-center text-sm text-muted-foreground">Loading more...</div>
+                                    <div ref={loadMoreRef} className="h-4 w-full" />
                                 </SidebarMenuItem>
                             )}
 
-                            {hasMore && (
+                            {isFetchingNextPage && (
                                 <SidebarMenuItem>
-                                    <SidebarMenuButton size="sm" className="justify-center" disabled={conversationsLoading} onClick={handleLoadMore}>
-                                        Load more
-                                    </SidebarMenuButton>
+                                    <div className="px-2 py-2 text-center text-xs text-muted-foreground">Loading more...</div>
                                 </SidebarMenuItem>
                             )}
                         </SidebarMenu>
