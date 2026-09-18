@@ -8,7 +8,7 @@ interface DocumentStatusProps {
 
 const DocumentStatus = ({ status }: DocumentStatusProps) => {
     switch (status) {
-        case "COMPLETED":
+        case "READY":
             return (
                 <div className="flex items-center gap-1.5 text-xs text-emerald-500">
                     <FiCheckCircle className="h-3.5 w-3.5" />
