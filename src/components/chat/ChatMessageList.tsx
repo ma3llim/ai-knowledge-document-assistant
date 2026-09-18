@@ -1,4 +1,5 @@
 import type { ChatMessage } from "@/services/websocket/types";
+import MarkdownMessage from "./MarkdownMessage";
 
 interface ChatMessageListProps {
     messages: ChatMessage[];
@@ -9,7 +10,7 @@ interface ChatMessageListProps {
 const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessageListProps) => {
     return (
         <div className="flex-1 overflow-y-auto">
-            <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-8">
+            <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8">
                 {messages.map((message) => {
                     const isUser = message.role === "user";
 
@@ -18,11 +19,11 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessag
                             <div
                                 className={
                                     isUser
-                                        ? "max-w-[80%] rounded-2xl rounded-br-md bg-primary px-4 py-3 text-sm text-primary-foreground"
+                                        ? "max-w-[80%] rounded-2xl rounded-br-md bg-secondary px-4 py-3 text-sm text-primary-foreground"
                                         : "max-w-[85%] text-sm leading-7"
                                 }
                             >
-                                <p className="whitespace-pre-wrap">{message.content}</p>
+                                <MarkdownMessage content={message.content} />
                             </div>
                         </div>
                     );
@@ -31,10 +32,8 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessag
                 {isStreaming && streamingContent && (
                     <div className="flex justify-start">
                         <div className="max-w-[85%] text-sm leading-7">
-                            <p className="whitespace-pre-wrap">
-                                {streamingContent}
-                                <span className="ml-1 inline-block h-4 w-1 animate-pulse bg-foreground align-middle" />
-                            </p>
+                            <MarkdownMessage content={streamingContent} isStreaming />
+                            <span className="ml-1 inline-block h-4 w-1 animate-pulse bg-foreground align-middle" />
                         </div>
                     </div>
                 )}

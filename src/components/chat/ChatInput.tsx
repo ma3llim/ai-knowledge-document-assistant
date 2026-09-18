@@ -22,7 +22,7 @@ const ChatInput = ({ disabled = false, onSend }: ChatInputProps) => {
 
     return (
         <div className="border-t bg-background px-6 py-4">
-            <div className="mx-auto flex max-w-3xl items-end gap-3 rounded-2xl border bg-muted/30 p-2">
+            <div className="mx-auto flex max-w-4xl items-end gap-3 rounded-2xl border bg-muted/30 p-2">
                 <textarea
                     value={message}
                     onChange={(event) => setMessage(event.target.value)}
