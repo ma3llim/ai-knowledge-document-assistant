@@ -1,32 +1,35 @@
-import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import { Button } from "@/components/ui/button";
+import { ENV } from "@/config/env";
+import { AUTH_ENDPOINTS } from "@/constants/auth";
+import { FcGoogle } from "react-icons/fc";
+import logo from "@/assets/logo.png";
 
 const Login = () => {
+    const handleGoogleLogin = () => {
+        window.location.href = `${ENV.API_BASE_URL}${AUTH_ENDPOINTS.GOOGLE_LOGIN}`;
+    };
+
     return (
-        <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-zinc-950 px-4">
-            <div className="pointer-events-none absolute inset-0">
-                <div className="absolute left-1/2 top-1/2 h-115 w-115 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/8 blur-[120px]" />
-                <div className="absolute -left-32 -top-32 h-72 w-72 rounded-full bg-blue-500/4 blur-[100px]" />
-                <div className="absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-purple-500/4 blur-[100px]" />
-            </div>
-
-            <section className="relative z-10 w-full max-w-105">
-                <div className="rounded-[28px] border border-white/[0.14] bg-white/6.5 p-8 shadow-2xl shadow-black/50 backdrop-blur-2xl sm:p-9">
-                    <div className="text-center">
-                        <h1 className="text-3xl font-semibold tracking-tight text-white">Welcome back</h1>
-
-                        <p className="mx-auto mt-2 max-w-xs text-sm leading-5 text-zinc-400">Sign in to continue to your AI documentation.</p>
+        <main className="flex min-h-screen items-center justify-center bg-[#0a0907] px-4">
+            <section className="w-full max-w-105">
+                <div className="rounded-2xl border border-white/10 bg-[#111111] p-8 text-center">
+                    <div className="mb-2 flex justify-center">
+                        <img src={logo} alt="AI Knowledge & Document Assistant" className="h-16 w-16 object-contain" />
                     </div>
-
-                    <div className="mt-7">
-                        <GoogleLoginButton />
+                    <h1 className="text-[30px] font-normal leading-[1.2] tracking-[-0.02em] text-[#f8f5ee]">Welcome back</h1>
+                    <p className="mx-auto mt-3 max-w-[320px] text-sm leading-6 text-[#a5a39d]">
+                        Sign in to continue to your AI Knowledge &amp; Document Assistant.
+                    </p>
+                    <div className="mt-2">
+                        <Button
+                            type="button"
+                            onClick={handleGoogleLogin}
+                            className="h-11 w-full rounded-md border border-white/10 bg-[#e7e5e0] text-sm font-medium text-[#0a0907] shadow-none transition-colors duration-150 hover:bg-white hover:text-[#0a0907] hover:shadow-none"
+                        >
+                            <FcGoogle className="mr-2.5 h-6 w-6" />
+                            Continue with Google
+                        </Button>
                     </div>
-
-                    <div className="mt-5 flex items-center gap-3">
-                        <div className="h-px flex-1 bg-white/8" />
-                        <span className="text-[10px] font-medium tracking-[0.14em] text-zinc-500">SECURE</span>
-                        <div className="h-px flex-1 bg-white/8" />
-                    </div>
-                    <p className="mt-3 text-center text-xs text-zinc-500">Secure authentication powered by Google.</p>
                 </div>
             </section>
         </main>
