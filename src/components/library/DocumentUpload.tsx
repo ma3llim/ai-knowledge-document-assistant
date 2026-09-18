@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { uploadDocument } from "@/services/api/documentApi";
 import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface DocumentUploadProps {
     open: boolean;
@@ -14,7 +15,7 @@ interface DocumentUploadProps {
 export function DocumentUpload({ open, onOpenChange, onSuccess }: DocumentUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isUploading, setIsUploading] = useState(false);
-
+    const queryClient = useQueryClient();
     const handleSelectFile = () => {
         inputRef.current?.click();
     };
@@ -35,6 +36,9 @@ export function DocumentUpload({ open, onOpenChange, onSuccess }: DocumentUpload
 
             onOpenChange(false);
             onSuccess?.();
+            queryClient.invalidateQueries({
+                queryKey: ["documents"],
+            });
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 toast.error(error.response?.data?.message ?? "Failed to upload document");
