@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { FiUpload, FiSearch, FiFileText, FiMoreHorizontal } from "react-icons/fi";
+import { FiUpload, FiFileText, FiMoreHorizontal } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useDocuments } from "@/hooks/useDocuments";
 import type { Document, DocumentStatus } from "@/types/document";
 import { DocumentUpload } from "@/components/library/DocumentUpload";
@@ -59,10 +58,8 @@ const statusConfig: Record<
 };
 
 const Library = () => {
-    const [page, setPage] = useState(0);
-    const [search, setSearch] = useState("");
     const [isUploadOpen, setIsUploadOpen] = useState(false);
-    const { data, isLoading, isError } = useDocuments(page, 12);
+    const { data, isLoading, isError } = useDocuments(0, 12);
     const documents = data?.content ?? [];
     const queryClient = useQueryClient();
     const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
@@ -145,26 +142,6 @@ const Library = () => {
                                 <p className="mt-0.5 text-xs text-[#a5a39d]">documents</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="mt-8 flex items-center justify-between gap-4">
-                        <div className="relative w-full max-w-105">
-                            <FiSearch className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#a5a39d]" />
-
-                            <Input
-                                value={search}
-                                onChange={(event) => {
-                                    setSearch(event.target.value);
-                                    setPage(0);
-                                }}
-                                placeholder="Search documents..."
-                                className="h-10 rounded-md border-white/10 bg-[#111111] pl-10 text-sm text-[#f8f5ee] placeholder:text-[#a5a39d] focus-visible:border-[#cbb0f7]/50 focus-visible:ring-1 focus-visible:ring-[#cbb0f7]/30"
-                            />
-                        </div>
-
-                        <span className="shrink-0 text-sm text-[#a5a39d]">
-                            {data?.totalElements ?? 0} {(data?.totalElements ?? 0) === 1 ? "document" : "documents"}
-                        </span>
                     </div>
 
                     <div className="mt-6 flex-1">

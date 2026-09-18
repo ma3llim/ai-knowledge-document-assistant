@@ -15,3 +15,9 @@ export interface PaginatedResponse<T> {
     first: boolean;
     last: boolean;
 }
+
+export interface PaginationRequest {
+    page: number;
+    size: number;
+    sort?: string[];
+}

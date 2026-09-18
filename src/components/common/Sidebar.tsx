@@ -1,138 +1,80 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { FiBookOpen, FiPlus, FiMessageSquare } from "react-icons/fi";
 
-import { NavWorkspaces } from "@/components/nav-workspaces";
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail,
 } from "@/components/ui/sidebar";
+
 import { SidebarUser } from "./sidebar-user";
 import logo from "@/assets/logo.png";
-import { FiBookOpen, FiPlus } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-
-// This is sample data.
-const data = {
-    workspaces: [
-        {
-            name: "Personal Life Management",
-            emoji: "🏠",
-            pages: [
-                {
-                    name: "Daily Journal & Reflection",
-                    url: "#",
-                    emoji: "📔",
-                },
-                {
-                    name: "Health & Wellness Tracker",
-                    url: "#",
-                    emoji: "🍏",
-                },
-                {
-                    name: "Personal Growth & Learning Goals",
-                    url: "#",
-                    emoji: "🌟",
-                },
-            ],
-        },
-        {
-            name: "Professional Development",
-            emoji: "💼",
-            pages: [
-                {
-                    name: "Career Objectives & Milestones",
-                    url: "#",
-                    emoji: "🎯",
-                },
-                {
-                    name: "Skill Acquisition & Training Log",
-                    url: "#",
-                    emoji: "🧠",
-                },
-                {
-                    name: "Networking Contacts & Events",
-                    url: "#",
-                    emoji: "🤝",
-                },
-            ],
-        },
-        {
-            name: "Creative Projects",
-            emoji: "🎨",
-            pages: [
-                {
-                    name: "Writing Ideas & Story Outlines",
-                    url: "#",
-                    emoji: "✍️",
-                },
-                {
-                    name: "Art & Design Portfolio",
-                    url: "#",
-                    emoji: "🖼️",
-                },
-                {
-                    name: "Music Composition & Practice Log",
-                    url: "#",
-                    emoji: "🎵",
-                },
-            ],
-        },
-        {
-            name: "Home Management",
-            emoji: "🏡",
-            pages: [
-                {
-                    name: "Household Budget & Expense Tracking",
-                    url: "#",
-                    emoji: "💰",
-                },
-                {
-                    name: "Home Maintenance Schedule & Tasks",
-                    url: "#",
-                    emoji: "🔧",
-                },
-                {
-                    name: "Family Calendar & Event Planning",
-                    url: "#",
-                    emoji: "📅",
-                },
-            ],
-        },
-        {
-            name: "Travel & Adventure",
-            emoji: "🧳",
-            pages: [
-                {
-                    name: "Trip Planning & Itineraries",
-                    url: "#",
-                    emoji: "🗺️",
-                },
-                {
-                    name: "Travel Bucket List & Inspiration",
-                    url: "#",
-                    emoji: "🌎",
-                },
-                {
-                    name: "Travel Journal & Photo Gallery",
-                    url: "#",
-                    emoji: "📸",
-                },
-            ],
-        },
-    ],
-};
+import type { PaginationRequest } from "@/types/api";
+import { getConversations } from "@/services/api/conversation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navigate = useNavigate();
+    const { conversationId } = useParams();
+
+    const [pagination, setPagination] = useState<PaginationRequest>({
+        page: 0,
+        size: 20,
+    });
+
+    const {
+        data: conversationData,
+        isLoading: conversationsLoading,
+        isError: conversationsError,
+    } = useQuery({
+        queryKey: ["conversations", pagination.page, pagination.size],
+        queryFn: () => getConversations(pagination.page, pagination.size),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const conversations = conversationData?.content ?? [];
+
+    const handleNewChat = () => {
+        navigate("/chat");
+    };
+
+    const handleConversationClick = (conversationId: string, documentId: string) => {
+        navigate(`/chat/${documentId}/${conversationId}`);
+    };
+
+    const handlePreviousPage = () => {
+        if (pagination.page === 0) {
+            return;
+        }
+
+        setPagination((current) => ({
+            ...current,
+            page: current.page - 1,
+        }));
+    };
+
+    const handleNextPage = () => {
+        if (!conversationData || conversationData.last) {
+            return;
+        }
+
+        setPagination((current) => ({
+            ...current,
+            page: current.page + 1,
+        }));
+    };
+
     return (
         <Sidebar className="border-r-0" {...props}>
             <SidebarHeader>
@@ -146,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <SidebarMenuButton className="[&>svg]:size-5!" onClick={() => navigate("/chat")}>
+                                <SidebarMenuButton className="[&>svg]:size-5!" onClick={handleNewChat}>
                                     <FiPlus />
                                     <span>New Chat</span>
                                 </SidebarMenuButton>
@@ -162,13 +104,70 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarGroupContent>
                 </SidebarGroup>
 
-                <NavWorkspaces workspaces={data.workspaces} />
+                <SidebarGroup>
+                    <SidebarGroupLabel>Conversations</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            {conversationsLoading && (
+                                <SidebarMenuItem>
+                                    <div className="px-2 py-2 text-sm text-muted-foreground">Loading conversations...</div>
+                                </SidebarMenuItem>
+                            )}
+
+                            {conversationsError && (
+                                <SidebarMenuItem>
+                                    <div className="px-2 py-2 text-sm text-muted-foreground">Failed to load conversations.</div>
+                                </SidebarMenuItem>
+                            )}
+
+                            {!conversationsLoading && !conversationsError && conversations.length === 0 && (
+                                <SidebarMenuItem>
+                                    <div className="px-2 py-2 text-sm text-muted-foreground">No conversations yet.</div>
+                                </SidebarMenuItem>
+                            )}
+
+                            {conversations.map((conversation) => {
+                                const isActive = conversation.conversationId === conversationId;
+                                return (
+                                    <SidebarMenuItem key={conversation.conversationId}>
+                                        <SidebarMenuButton
+                                            isActive={isActive}
+                                            tooltip={conversation.title}
+                                            onClick={() => handleConversationClick(conversation.conversationId, conversation.documentId)}
+                                        >
+                                            <FiMessageSquare />
+
+                                            <span className="truncate">{conversation.title || "Untitled conversation"}</span>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                );
+                            })}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+                {conversationData && conversationData.totalPages > 1 && (
+                    <SidebarGroup>
+                        <SidebarGroupContent>
+                            <div className="flex items-center justify-between px-2">
+                                <SidebarMenuButton size="sm" disabled={pagination.page === 0} onClick={handlePreviousPage} className="w-auto">
+                                    Previous
+                                </SidebarMenuButton>
+                                <span className="text-xs text-muted-foreground">
+                                    {pagination.page + 1} / {conversationData.totalPages}
+                                </span>
+                                <SidebarMenuButton size="sm" disabled={conversationData.last} onClick={handleNextPage} className="w-auto">
+                                    Next
+                                </SidebarMenuButton>
+                            </div>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
             </SidebarContent>
 
             <SidebarFooter>
                 <SidebarUser />
             </SidebarFooter>
-
             <SidebarRail />
         </Sidebar>
     );
