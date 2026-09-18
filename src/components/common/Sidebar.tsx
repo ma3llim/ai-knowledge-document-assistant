@@ -23,6 +23,7 @@ import { ConversationItem } from "./ConversationItem";
 import logo from "@/assets/logo.png";
 import type { ConversationPage } from "@/types/conversation";
 import { deleteConversation, getConversations, updateConversationTitle } from "@/services/api/conversation";
+import { LoaderCircle } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navigate = useNavigate();
@@ -178,7 +179,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenu className="gap-0.5">
                             {conversationsLoading && conversations.length === 0 && (
                                 <SidebarMenuItem>
-                                    <div className="px-2 py-2 text-sm text-muted-foreground">Loading conversations...</div>
+                                    <div className="flex items-center justify-center">
+                                        <LoaderCircle className="size-6 animate-spin" />
+                                    </div>
                                 </SidebarMenuItem>
                             )}
 
