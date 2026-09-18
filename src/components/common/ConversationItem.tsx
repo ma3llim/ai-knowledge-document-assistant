@@ -105,12 +105,12 @@ export function ConversationItem({ conversation, isActive, onClick, onRename, on
 
     return (
         <SidebarMenuItem>
-            <div className="relative w-full rounded-md">
-                <SidebarMenuButton isActive={isActive} onClick={onClick} tooltip={conversation.title} className="group-hover:pr-16 w-full min-w-0">
-                    <span className="block min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{conversation.title}</span>
+            <div className="conversation-item relative w-full rounded-md">
+                <SidebarMenuButton isActive={isActive} onClick={onClick} tooltip={conversation.title} className="w-full min-w-0">
+                    <span className="block min-w-0 flex-1 overflow-hidden whitespace-nowrap">{conversation.title}</span>
                 </SidebarMenuButton>
 
-                <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2 items-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                <div className="conversation-actions absolute right-1 top-1/2 z-10 flex -translate-y-1/2 items-center rounded-md bg-sidebar opacity-0 transition-opacity">
                     <button
                         type="button"
                         onClick={(event) => {

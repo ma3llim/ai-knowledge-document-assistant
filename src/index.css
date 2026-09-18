@@ -104,3 +104,8 @@
 button {
     cursor: pointer;
 }
+
+.conversation-item:hover .conversation-actions,
+.conversation-item:focus-within .conversation-actions {
+    opacity: 1;
+}
