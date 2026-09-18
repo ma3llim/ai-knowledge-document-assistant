@@ -31,7 +31,14 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                     const data = event.data;
 
                     if (data && typeof data === "object" && "conversationId" in data) {
-                        const { conversationId, newlyCreated } = data;
+                        const { conversationId, newlyCreated } = data as {
+                            conversationId?: string;
+                            newlyCreated?: boolean;
+                        };
+
+                        if (conversationId) {
+                            onConversationCreated?.(conversationId);
+                        }
 
                         if (conversationId && newlyCreated) {
                             queryClient.invalidateQueries({
@@ -39,6 +46,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                             });
                         }
                     }
+
                     break;
                 }
 
@@ -129,7 +137,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
     }, []);
 
     const sendMessage = useCallback(
-        (userQuery: string) => {
+        async (userQuery: string) => {
             if (!documentId) {
                 toast.error("Please select a document first");
                 return;
@@ -140,28 +148,30 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                 return;
             }
 
-            if (!chatWebSocket.isConnected) {
-                toast.error("Chat connection is not ready");
-                return;
-            }
-
             const trimmedQuery = userQuery.trim();
 
             if (!trimmedQuery) {
                 return;
             }
 
-            const request: ChatWebSocketRequest = {
-                documentId,
-                userId: user.id,
-                conversationId,
-                userQuery: trimmedQuery,
-            };
+            try {
+                await chatWebSocket.ensureConnection(accessToken!);
 
-            chatWebSocket.send(request);
+                const request: ChatWebSocketRequest = {
+                    documentId,
+                    userId: user.id,
+                    conversationId,
+                    userQuery: trimmedQuery,
+                };
 
-            setIsStreaming(true);
-            setStreamingContent("");
+                chatWebSocket.send(request);
+
+                setIsStreaming(true);
+                setStreamingContent("");
+            } catch (error) {
+                console.error("Failed to send chat message:", error);
+                toast.error("Unable to connect to chat server");
+            }
         },
         [conversationId, documentId, user?.id],
     );

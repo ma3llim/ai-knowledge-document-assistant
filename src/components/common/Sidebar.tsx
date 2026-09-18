@@ -25,6 +25,7 @@ import type { ConversationPage } from "@/types/conversation";
 import { deleteConversation, getConversations, updateConversationTitle } from "@/services/api/conversation";
 import { LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
+import { chatWebSocket } from "@/services/websocket/chatWebSocket";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navigate = useNavigate();
@@ -81,6 +82,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     };
 
     const handleConversationClick = (selectedConversationId: string, documentId: string) => {
+        if (chatWebSocket.isConnected) {
+            chatWebSocket.disconnect();
+        }
         navigate(`/chat/${documentId}/${selectedConversationId}`);
     };
 

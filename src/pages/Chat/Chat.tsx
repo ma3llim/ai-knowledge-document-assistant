@@ -2,7 +2,6 @@ import Loader from "@/components/common/Loader";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useDocuments } from "@/hooks/useDocuments";
-import { chatWebSocket } from "@/services/websocket/chatWebSocket";
 import type { RootState } from "@/store";
 import type { Document } from "@/types/document";
 import { formatFileSize } from "@/utils.TextUtils";
@@ -27,8 +26,6 @@ const Chat = () => {
         if (!accessToken) {
             return;
         }
-
-        chatWebSocket.connect(accessToken);
 
         navigate(`/chat/${selectedDocument.id}`);
     };

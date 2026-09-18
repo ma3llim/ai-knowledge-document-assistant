@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ChatHeader from "@/components/chat/ChatHeader";
 import ChatMessageList from "@/components/chat/ChatMessageList";
 import ChatInput from "@/components/chat/ChatInput";
 import { useChatWebSocket } from "@/hooks/useChatWebSocket";
 import { useDocument } from "@/hooks/useDocuments";
-import { chatWebSocket } from "@/services/websocket/chatWebSocket";
 import type { ChatMessage } from "@/services/websocket/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { MessagePage } from "@/types/conversation";
 import { getConversationMessages } from "@/services/api/conversation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@base-ui/react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { chatWebSocket } from "@/services/websocket/chatWebSocket";
 
 const ChatConversation = () => {
     const { documentId, conversationId: routeConversationId } = useParams();
-    const navigate = useNavigate();
     const [conversationId, setConversationId] = useState<string | null>(routeConversationId ?? null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const { data, isLoading, isError } = useDocument(documentId!);
+    const navigate = useNavigate();
+
+    console.log("routeConversationId:", routeConversationId);
+    console.log("conversationId state:", conversationId);
 
     const { data: conversationMessageData, isLoading: messagesLoading } = useInfiniteQuery<MessagePage>({
         queryKey: ["conversation-messages", routeConversationId],
@@ -36,7 +41,7 @@ const ChatConversation = () => {
         getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextCursor : undefined),
     });
 
-    const { isConnected, isStreaming, streamingContent, sendMessage } = useChatWebSocket({
+    const { isStreaming, streamingContent, sendMessage } = useChatWebSocket({
         documentId: documentId ?? null,
         conversationId,
         onConversationCreated: setConversationId,
@@ -51,15 +56,6 @@ const ChatConversation = () => {
             ]);
         },
     });
-
-    const handleBack = () => {
-        chatWebSocket.disconnect();
-
-        setConversationId(null);
-        setMessages([]);
-
-        navigate("/chat");
-    };
 
     useEffect(() => {
         if (!conversationMessageData) {
@@ -77,6 +73,10 @@ const ChatConversation = () => {
 
         setMessages(loadedMessages);
     }, [conversationMessageData]);
+
+    useEffect(() => {
+        setConversationId(routeConversationId ?? null);
+    }, [routeConversationId]);
 
     const handleSend = (userQuery: string) => {
         setMessages((current) => [
@@ -132,11 +132,63 @@ const ChatConversation = () => {
     }
 
     return (
-        <div className="flex min-h-svh w-full flex-col">
-            <ChatHeader documentName={data?.data?.originalFilename!} isConnected={isConnected} onBack={handleBack} />
-            <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
-            <ChatInput disabled={!isConnected || isStreaming} onSend={handleSend} />
-        </div>
+        <main className="flex h-svh min-h-0 flex-1 flex-col overflow-hidden bg-[#0a0907]">
+            <header className="flex h-14 shrink-0 items-center border-b border-white/10">
+                <div className="flex w-full items-center gap-3 px-4">
+                    <SidebarTrigger />
+
+                    <Separator orientation="vertical" className="h-5 w-px shrink-0 bg-white/10" />
+
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbLink
+                                    onClick={(event) => {
+                                        event.preventDefault();
+
+                                        if (chatWebSocket.isConnected) {
+                                            chatWebSocket.disconnect();
+                                        }
+
+                                        navigate("/chat");
+                                    }}
+                                >
+                                    Chat
+                                </BreadcrumbLink>
+                            </BreadcrumbItem>
+
+                            <BreadcrumbSeparator />
+
+                            <BreadcrumbItem>
+                                <BreadcrumbPage className="max-w-64 truncate text-sm font-medium text-[#f8f5ee]">
+                                    {data?.data?.originalFilename}
+                                </BreadcrumbPage>
+                            </BreadcrumbItem>
+
+                            {routeConversationId && (
+                                <>
+                                    <BreadcrumbSeparator />
+
+                                    <BreadcrumbItem>
+                                        <BreadcrumbPage className="text-sm text-muted-foreground">Conversation</BreadcrumbPage>
+                                    </BreadcrumbItem>
+                                </>
+                            )}
+                        </BreadcrumbList>
+                    </Breadcrumb>
+                </div>
+            </header>
+
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                <div className="min-h-0 flex-1 overflow-y-auto">
+                    <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
+                </div>
+
+                <div className="shrink-0">
+                    <ChatInput disabled={isStreaming} onSend={handleSend} />
+                </div>
+            </div>
+        </main>
     );
 };
 
