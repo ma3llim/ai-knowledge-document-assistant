@@ -35,3 +35,32 @@ export interface MessagePage {
     nextCursor: MessageCursor | null;
     hasMore: boolean;
 }
+
+export interface ChatStartData {
+    documentId: string;
+}
+
+export interface ChatStartEvent {
+    type: "START";
+    data: ChatStartData;
+    conversationId: string;
+    conversationTitle: string;
+    newlyCreated: boolean;
+}
+
+export interface ChatContentEvent {
+    type: "CONTENT";
+    data: string;
+}
+
+export interface ChatErrorData {
+    code: string;
+    message: string;
+}
+
+export interface ChatErrorEvent {
+    type: "ERROR";
+    data: ChatErrorData;
+}
+
+export type ChatWebSocketEvent = ChatStartEvent | ChatContentEvent | ChatErrorEvent;
