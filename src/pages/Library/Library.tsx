@@ -82,6 +82,9 @@ const Library = () => {
             await queryClient.invalidateQueries({
                 queryKey: ["documents"],
             });
+            await queryClient.invalidateQueries({
+                queryKey: ["conversations"],
+            });
         } catch (error) {
             console.error("Failed to delete document:", error);
         }
