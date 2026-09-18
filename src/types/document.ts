@@ -1,4 +1,4 @@
-export type DocumentStatus = "UPLOADED" | "PROCESSING" | "READY" | "FAILED";
+export type DocumentStatus = "UPLOADED" | "PROCESSING" | "READY" | "FAILED" | "DELETING";
 
 export type DocumentFileType = "PDF" | "DOCX" | "XLSX" | "PPTX" | "TXT" | "MD" | "CSV";
 
