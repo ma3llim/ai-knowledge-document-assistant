@@ -26,35 +26,39 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
             switch (event.type) {
                 case "START": {
                     setIsStreaming(true);
+                    streamingContentRef.current = "";
                     setStreamingContent("");
 
-                    const data = event.data;
+                    if (!event.data || typeof event.data !== "object") {
+                        break;
+                    }
 
-                    if (data && typeof data === "object" && "conversationId" in data) {
-                        const { conversationId, newlyCreated } = data as {
-                            conversationId?: string;
-                            newlyCreated?: boolean;
-                        };
+                    const { conversationId: resolvedConversationId, newlyCreated } = event.data as {
+                        conversationId?: string;
+                        newlyCreated?: boolean;
+                    };
 
-                        if (conversationId) {
-                            onConversationCreated?.(conversationId);
-                        }
+                    if (resolvedConversationId) {
+                        onConversationCreated?.(resolvedConversationId);
+                    }
 
-                        if (conversationId && newlyCreated) {
-                            queryClient.invalidateQueries({
-                                queryKey: ["conversations"],
-                            });
-                        }
+                    if (resolvedConversationId && newlyCreated) {
+                        queryClient.invalidateQueries({
+                            queryKey: ["conversations"],
+                        });
                     }
 
                     break;
                 }
 
                 case "CONTENT": {
-                    if (typeof event.data === "string") {
-                        streamingContentRef.current += event.data;
-                        setStreamingContent(streamingContentRef.current);
+                    if (typeof event.data !== "string") {
+                        break;
                     }
+
+                    streamingContentRef.current += event.data;
+
+                    setStreamingContent(streamingContentRef.current);
 
                     break;
                 }
@@ -69,24 +73,29 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                     streamingContentRef.current = "";
                     setStreamingContent("");
                     setIsStreaming(false);
+
                     break;
                 }
 
                 case "ERROR": {
-                    setIsStreaming(false);
-                    setStreamingContent("");
-
                     const errorData = event.data as ChatErrorData;
+                    const errorMessage = errorData?.message;
 
-                    toast.error(errorData?.message ?? "Unable to generate a response");
+                    if (errorMessage) {
+                        onMessageComplete?.(errorMessage);
+                    }
+
+                    streamingContentRef.current = "";
+                    setStreamingContent("");
+                    setIsStreaming(false);
+
                     break;
                 }
-
                 default:
                     break;
             }
         },
-        [onConversationCreated],
+        [onConversationCreated, onMessageComplete, queryClient],
     );
 
     useEffect(() => {

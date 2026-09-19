@@ -26,7 +26,6 @@ class ChatWebSocket {
         this.socket = new WebSocket(url);
 
         this.socket.onopen = () => {
-            console.log("WebSocket connected");
             this.notifyOpen();
         };
 
@@ -47,12 +46,6 @@ class ChatWebSocket {
         };
 
         this.socket.onclose = (event) => {
-            console.log("WebSocket closed:", {
-                code: event.code,
-                reason: event.reason,
-                wasClean: event.wasClean,
-            });
-
             this.socket = null;
             this.notifyClose();
         };

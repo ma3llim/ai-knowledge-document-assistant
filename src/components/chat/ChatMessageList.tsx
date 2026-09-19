@@ -10,7 +10,7 @@ interface ChatMessageListProps {
 const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessageListProps) => {
     return (
         <div className="flex-1 overflow-y-auto">
-            <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8">
+            <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
                 {messages.map((message) => {
                     const isUser = message.role === "user";
 
@@ -19,8 +19,8 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessag
                             <div
                                 className={
                                     isUser
-                                        ? "max-w-[80%] rounded-2xl rounded-br-md bg-secondary px-4 py-3 text-sm text-primary-foreground"
-                                        : "max-w-[85%] text-sm leading-7"
+                                        ? "max-w-[min(42rem,calc(100vw-2rem))] rounded-2xl rounded-br-md bg-secondary px-4 py-3 text-sm text-primary-foreground"
+                                        : "max-w-[min(48rem,calc(100vw-2rem))] text-sm leading-7"
                                 }
                             >
                                 <MarkdownMessage content={message.content} />
@@ -31,8 +31,9 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessag
 
                 {isStreaming && streamingContent && (
                     <div className="flex justify-start">
-                        <div className="max-w-[85%] text-sm leading-7">
+                        <div className="max-w-[min(48rem,calc(100vw-2rem))] text-sm leading-7">
                             <MarkdownMessage content={streamingContent} isStreaming />
+
                             <span className="ml-1 inline-block h-4 w-1 animate-pulse bg-foreground align-middle" />
                         </div>
                     </div>
