@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Hero = () => {
     return (
         <section className="relative overflow-hidden bg-landing-background">
@@ -14,9 +16,11 @@ const Hero = () => {
                     Upload your documents, ask questions in natural language, and get grounded answers powered by retrieval-augmented AI.
                 </p>
                 <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
-                    <button className="inline-flex h-11 items-center justify-center rounded-lg bg-landing-primary px-6 text-sm font-semibold text-landing-primary-foreground shadow-[0_8px_30px_rgba(139,124,246,0.20)] transition-all duration-200 hover:bg-landing-primary-hover hover:shadow-[0_10px_36px_rgba(139,124,246,0.28)]">
-                        Start exploring
-                    </button>
+                    <Link to={"/login"}>
+                        <button className="inline-flex h-11 items-center justify-center rounded-lg bg-landing-primary px-6 text-sm font-semibold text-landing-primary-foreground shadow-[0_8px_30px_rgba(139,124,246,0.20)] transition-all duration-200 hover:bg-landing-primary-hover hover:shadow-[0_10px_36px_rgba(139,124,246,0.28)]">
+                            Start exploring
+                        </button>
+                    </Link>
                     <button className="inline-flex h-11 items-center justify-center rounded-lg border border-landing-border bg-landing-surface/60 px-6 text-sm font-medium text-landing-foreground backdrop-blur-md transition-colors duration-200 hover:bg-landing-panel">
                         See how it works
                     </button>

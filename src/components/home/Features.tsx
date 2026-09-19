@@ -184,7 +184,7 @@ const FeatureVisual = ({ type }: { type: string }) => {
 
 const Features = () => {
     return (
-        <section className="relative overflow-hidden bg-landing-background py-10 border border-red-950">
+        <section className="relative overflow-hidden bg-landing-background py-10">
             <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-175 -translate-x-1/2 rounded-full bg-landing-primary/5 blur-[120px]" />
             <div className="relative mx-auto max-w-7xl px-6">
                 <div className="max-w-5xl">
@@ -200,28 +200,25 @@ const Features = () => {
                     </p>
                 </div>
 
-                <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {features.map((feature) => (
                         <article
                             key={feature.number}
-                            className={`group ${feature.className} relative overflow-hidden rounded-2xl border border-landing-border bg-landing-surface/70 p-6 transition-all duration-300 hover:border-landing-primary/25 hover:bg-landing-panel`}
+                            className="group relative overflow-hidden rounded-2xl border border-landing-border bg-landing-surface/70 p-6 transition-all duration-300 hover:border-landing-primary/25 hover:bg-landing-panel"
                         >
                             <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-landing-primary/[0.07] opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
 
                             <div className="relative">
-                                {/* Number */}
                                 <span className="font-mono text-[10px] tracking-[0.16em] text-landing-primary/70">{feature.number}</span>
 
-                                {/* Content */}
-                                <h3 className="mt-5 max-w-md text-xl font-semibold tracking-tight text-landing-foreground">{feature.title}</h3>
+                                <h3 className="mt-5 text-xl font-semibold tracking-tight text-landing-foreground">{feature.title}</h3>
 
-                                <p className="mt-3 max-w-md text-sm leading-6 text-landing-muted">{feature.description}</p>
+                                <p className="mt-3 text-sm leading-6 text-landing-muted">{feature.description}</p>
 
                                 {feature.meta && (
                                     <div className="mt-5 text-[10px] font-medium tracking-[0.08em] text-landing-muted/70">{feature.meta}</div>
                                 )}
 
-                                {/* Visual */}
                                 <FeatureVisual type={feature.visual} />
                             </div>
                         </article>
