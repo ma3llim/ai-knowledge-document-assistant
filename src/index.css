@@ -74,8 +74,8 @@
     --accent: #cbb0f7;
     --accent-foreground: #0a0907;
     --destructive: #ef4444;
-    --border: rgba(255, 255, 255, 0.10);
-    --input: rgba(255, 255, 255, 0.20);
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.2);
     --ring: #cbb0f7;
     --chart-1: #cbb0f7;
     --chart-2: #8f8c86;
@@ -88,21 +88,21 @@
     --sidebar-primary-foreground: #0a0907;
     --sidebar-accent: #181715;
     --sidebar-accent-foreground: #f8f5ee;
-    --sidebar-border: rgba(255, 255, 255, 0.10);
+    --sidebar-border: rgba(255, 255, 255, 0.1);
     --sidebar-ring: #cbb0f7;
     color-scheme: dark;
     --radius: 16px;
     /* LANDING PAGE THEME */
-    --landing-background: #090A0A;
+    --landing-background: #090a0a;
     --landing-surface: #101211;
     --landing-panel: #151816;
-    --landing-border: #252A27;
-    --landing-foreground: #F4F3EE;
-    --landing-muted: #969B96;
-    --landing-primary: #8B7CF6;
-    --landing-primary-hover: #9D90FF;
-    --landing-primary-foreground: #090A0A;
-    --landing-glow: rgba(139, 124, 246, 0.20);
+    --landing-border: #252a27;
+    --landing-foreground: #f4f3ee;
+    --landing-muted: #969b96;
+    --landing-primary: #8b7cf6;
+    --landing-primary-hover: #9d90ff;
+    --landing-primary-foreground: #090a0a;
+    --landing-glow: rgba(139, 124, 246, 0.2);
 }
 
 @layer base {
