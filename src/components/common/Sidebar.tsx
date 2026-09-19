@@ -23,9 +23,9 @@ import { ConversationItem } from "./ConversationItem";
 import logo from "@/assets/logo.png";
 import type { ConversationPage } from "@/types/conversation";
 import { deleteConversation, getConversations, updateConversationTitle } from "@/services/api/conversation";
-import { LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 import { chatWebSocket } from "@/services/websocket/chatWebSocket";
+import { ConversationListSkeleton } from "./ConversationListSkeleton";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const navigate = useNavigate();
@@ -196,13 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarGroupLabel>Conversations</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu className="gap-0.5">
-                            {conversationsLoading && conversations.length === 0 && (
-                                <SidebarMenuItem>
-                                    <div className="flex items-center justify-center">
-                                        <LoaderCircle className="size-6 animate-spin" />
-                                    </div>
-                                </SidebarMenuItem>
-                            )}
+                            {conversationsLoading && conversations.length === 0 && <ConversationListSkeleton />}
 
                             {conversationsError && conversations.length === 0 && (
                                 <SidebarMenuItem>
