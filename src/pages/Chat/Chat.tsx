@@ -1,4 +1,3 @@
-import Loader from "@/components/common/Loader";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useDocuments } from "@/hooks/useDocuments";
@@ -10,6 +9,7 @@ import { useState } from "react";
 import { FiCheck, FiFileText } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { DocumentSelectionSkeleton } from "./DocumentSelectionSkeleton";
 
 const Chat = () => {
     const navigate = useNavigate();
@@ -30,10 +30,6 @@ const Chat = () => {
         navigate(`/chat/${selectedDocument.id}`);
     };
 
-    if (isLoading) {
-        return <Loader />;
-    }
-
     return (
         <main className="flex min-h-svh flex-1 flex-col bg-[#0a0907]">
             <header className="flex h-14 shrink-0 items-center border-b border-white/10">
@@ -49,47 +45,54 @@ const Chat = () => {
                     </Breadcrumb>
                 </div>
             </header>
-            <div className="flex min-h-svh w-full items-center justify-center px-6">
+
+            <div className="flex flex-1 w-full items-center justify-center px-6">
                 <div className="w-full max-w-5xl">
                     <div className="mb-10 text-center">
                         <h1 className="text-3xl font-semibold tracking-tight">Select a document</h1>
+
                         <p className="mt-3 text-sm text-muted-foreground">Choose a document to start chatting with your AI assistant.</p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {documents.map((document) => {
-                            const isSelected = selectedDocument?.id === document.id;
+                    {isLoading ? (
+                        <DocumentSelectionSkeleton />
+                    ) : (
+                        <div className="flex flex-wrap justify-center gap-4">
+                            {documents.map((document) => {
+                                const isSelected = selectedDocument?.id === document.id;
 
-                            return (
-                                <button
-                                    key={document.id}
-                                    type="button"
-                                    onClick={() => setSelectedDocument(document)}
-                                    className={`relative w-full max-w-xs rounded-xl border p-5 text-left transition ${
-                                        isSelected
-                                            ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                            : "border-border hover:border-primary/40 hover:bg-muted/40"
-                                    }`}
-                                >
-                                    {isSelected && (
-                                        <span className="absolute right-4 top-4 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                                            <FiCheck size={14} />
-                                        </span>
-                                    )}
+                                return (
+                                    <button
+                                        key={document.id}
+                                        type="button"
+                                        onClick={() => setSelectedDocument(document)}
+                                        className={`relative w-full max-w-xs rounded-xl border p-5 text-left transition ${
+                                            isSelected
+                                                ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                                : "border-border hover:border-primary/40 hover:bg-muted/40"
+                                        }`}
+                                    >
+                                        {isSelected && (
+                                            <span className="absolute right-4 top-4 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                                                <FiCheck size={14} />
+                                            </span>
+                                        )}
 
-                                    <div className="mb-5 flex size-11 items-center justify-center rounded-lg bg-muted">
-                                        <FiFileText size={22} />
-                                    </div>
+                                        <div className="mb-5 flex size-11 items-center justify-center rounded-lg bg-muted">
+                                            <FiFileText size={22} />
+                                        </div>
 
-                                    <h3 className="truncate font-medium">{document.originalFilename}</h3>
+                                        <h3 className="truncate font-medium">{document.originalFilename}</h3>
 
-                                    <p className="mt-2 text-xs text-muted-foreground">
-                                        {document.fileType} • {formatFileSize(document.fileSize)}
-                                    </p>
-                                </button>
-                            );
-                        })}
-                    </div>
+                                        <p className="mt-2 text-xs text-muted-foreground">
+                                            {document.fileType} • {formatFileSize(document.fileSize)}
+                                        </p>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+
                     <div className="mt-8 flex justify-center">
                         <button
                             type="button"
