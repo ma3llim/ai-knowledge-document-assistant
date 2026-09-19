@@ -18,6 +18,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
     const [isConnected, setIsConnected] = useState(chatWebSocket.isConnected);
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingContent, setStreamingContent] = useState("");
+    const [isThinking, setIsThinking] = useState(false);
     const streamingContentRef = useRef("");
     const queryClient = useQueryClient();
 
@@ -55,6 +56,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
                     if (typeof event.data !== "string") {
                         break;
                     }
+                    setIsThinking(false);
 
                     streamingContentRef.current += event.data;
 
@@ -192,5 +194,7 @@ export const useChatWebSocket = ({ documentId, conversationId, onConversationCre
         connect,
         disconnect,
         sendMessage,
+        isThinking,
+        setIsThinking,
     };
 };

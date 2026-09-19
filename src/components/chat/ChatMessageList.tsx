@@ -5,9 +5,10 @@ interface ChatMessageListProps {
     messages: ChatMessage[];
     streamingContent: string;
     isStreaming: boolean;
+    isThinking: boolean;
 }
 
-const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessageListProps) => {
+const ChatMessageList = ({ messages, streamingContent, isStreaming, isThinking }: ChatMessageListProps) => {
     return (
         <div className="flex-1 overflow-y-auto">
             <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
@@ -28,6 +29,20 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming }: ChatMessag
                         </div>
                     );
                 })}
+
+                {/* {isThinking && ( */}
+                <div className="flex justify-start items-center">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <p>AI is generating your response</p>
+
+                        <span className="flex gap-1 mt-1.5 items-center">
+                            <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s] bg-muted-foreground" />
+                            <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s] bg-muted-foreground" />
+                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" />
+                        </span>
+                    </div>
+                </div>
+                {/* )} */}
 
                 {isStreaming && streamingContent && (
                     <div className="flex justify-start">

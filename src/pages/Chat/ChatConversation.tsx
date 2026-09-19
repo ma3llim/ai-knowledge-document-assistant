@@ -38,7 +38,7 @@ const ChatConversation = () => {
         getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextCursor : undefined),
     });
 
-    const { isStreaming, streamingContent, sendMessage } = useChatWebSocket({
+    const { isStreaming, streamingContent, sendMessage, isThinking, setIsThinking } = useChatWebSocket({
         documentId: documentId ?? null,
         conversationId,
         onConversationCreated: setConversationId,
@@ -84,8 +84,8 @@ const ChatConversation = () => {
                 content: userQuery,
             },
         ]);
-
         sendMessage(userQuery);
+        setIsThinking(true);
     };
 
     if (isError || !document) {
@@ -147,7 +147,7 @@ const ChatConversation = () => {
                     {isLoading || (routeConversationId && messagesLoading) ? (
                         <ChatConversationSkeleton />
                     ) : (
-                        <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
+                        <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} isThinking={isThinking} />
                     )}
                 </div>
 
