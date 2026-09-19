@@ -45,6 +45,17 @@
     --radius-2xl: 16px;
     --radius-3xl: 16px;
     --radius-4xl: 16px;
+    /* LANDING PAGE THEME */
+    --color-landing-background: var(--landing-background);
+    --color-landing-surface: var(--landing-surface);
+    --color-landing-panel: var(--landing-panel);
+    --color-landing-border: var(--landing-border);
+    --color-landing-foreground: var(--landing-foreground);
+    --color-landing-muted: var(--landing-muted);
+    --color-landing-primary: var(--landing-primary);
+    --color-landing-primary-hover: var(--landing-primary-hover);
+    --color-landing-primary-foreground: var(--landing-primary-foreground);
+    --color-landing-glow: var(--landing-glow);
 }
 
 :root {
@@ -81,6 +92,17 @@
     --sidebar-ring: #cbb0f7;
     color-scheme: dark;
     --radius: 16px;
+    /* LANDING PAGE THEME */
+    --landing-background: #090A0A;
+    --landing-surface: #101211;
+    --landing-panel: #151816;
+    --landing-border: #252A27;
+    --landing-foreground: #F4F3EE;
+    --landing-muted: #969B96;
+    --landing-primary: #8B7CF6;
+    --landing-primary-hover: #9D90FF;
+    --landing-primary-foreground: #090A0A;
+    --landing-glow: rgba(139, 124, 246, 0.20);
 }
 
 @layer base {
