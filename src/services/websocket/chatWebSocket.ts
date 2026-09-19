@@ -23,13 +23,23 @@ class ChatWebSocket {
 
         const url = `${ENV.WS_BASE_URL}?token=${encodeURIComponent(accessToken)}`;
 
-        this.socket = new WebSocket(url);
+        const socket = new WebSocket(url);
 
-        this.socket.onopen = () => {
+        this.socket = socket;
+
+        socket.onopen = () => {
+            if (this.socket !== socket) {
+                return;
+            }
+
             this.notifyOpen();
         };
 
-        this.socket.onmessage = (event) => {
+        socket.onmessage = (event) => {
+            if (this.socket !== socket) {
+                return;
+            }
+
             try {
                 const parsedEvent = JSON.parse(event.data) as ChatWebSocketEvent;
 
@@ -40,12 +50,20 @@ class ChatWebSocket {
             }
         };
 
-        this.socket.onerror = (event) => {
+        socket.onerror = (event) => {
+            if (this.socket !== socket) {
+                return;
+            }
+
             console.error("WebSocket error:", event);
             this.notifyError();
         };
 
-        this.socket.onclose = (event) => {
+        socket.onclose = () => {
+            if (this.socket !== socket) {
+                return;
+            }
+
             this.socket = null;
             this.notifyClose();
         };
@@ -69,13 +87,17 @@ class ChatWebSocket {
         return new Promise((resolve, reject) => {
             let settled = false;
 
+            let unsubscribeOpen: (() => void) | undefined;
+            let unsubscribeError: (() => void) | undefined;
+            let unsubscribeClose: (() => void) | undefined;
+
             const cleanup = () => {
-                unsubscribeOpen();
-                unsubscribeError();
-                unsubscribeClose();
+                unsubscribeOpen?.();
+                unsubscribeError?.();
+                unsubscribeClose?.();
             };
 
-            const unsubscribeOpen = this.subscribeOpen(() => {
+            unsubscribeOpen = this.subscribeOpen(() => {
                 if (settled) {
                     return;
                 }
@@ -85,7 +107,7 @@ class ChatWebSocket {
                 resolve();
             });
 
-            const unsubscribeError = this.subscribeError(() => {
+            unsubscribeError = this.subscribeError(() => {
                 if (settled) {
                     return;
                 }
@@ -95,7 +117,7 @@ class ChatWebSocket {
                 reject(new Error("WebSocket connection failed"));
             });
 
-            const unsubscribeClose = this.subscribeClose(() => {
+            unsubscribeClose = this.subscribeClose(() => {
                 if (settled) {
                     return;
                 }
@@ -136,12 +158,17 @@ class ChatWebSocket {
     }
 
     disconnect(): void {
-        if (!this.socket) {
+        const socket = this.socket;
+
+        if (!socket) {
             return;
         }
 
-        this.socket.close();
         this.socket = null;
+
+        if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+            socket.close();
+        }
     }
 
     get isConnected(): boolean {
