@@ -21,6 +21,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { formatDate, formatFileSize } from "@/utils.TextUtils";
+import { LibrarySkeleton } from "../Document/LibrarySkeleton";
 
 const statusConfig: Record<
     DocumentStatus,
@@ -90,6 +91,10 @@ const Library = () => {
         }
     };
 
+    if (isLoading) {
+        return <LibrarySkeleton />;
+    }
+
     return (
         <>
             <main className="flex min-h-svh flex-1 flex-col bg-[#0a0907]">
@@ -148,12 +153,6 @@ const Library = () => {
                     </div>
 
                     <div className="mt-6 flex-1">
-                        {isLoading && (
-                            <div className="flex min-h-64 items-center justify-center">
-                                <p className="text-sm text-[#a5a39d]">Loading documents...</p>
-                            </div>
-                        )}
-
                         {isError && (
                             <div className="flex min-h-64 items-center justify-center rounded-2xl border border-white/10 bg-[#111111]">
                                 <div className="text-center">
