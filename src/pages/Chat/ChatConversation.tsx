@@ -8,11 +8,11 @@ import type { ChatMessage } from "@/services/websocket/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { MessagePage } from "@/types/conversation";
 import { getConversationMessages } from "@/services/api/conversation";
-import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@base-ui/react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { chatWebSocket } from "@/services/websocket/chatWebSocket";
+import { ChatConversationSkeleton } from "./ChatConversationSkeleton";
 
 const ChatConversation = () => {
     const { documentId, conversationId: routeConversationId } = useParams();
@@ -88,38 +88,6 @@ const ChatConversation = () => {
         sendMessage(userQuery);
     };
 
-    if (isLoading || (routeConversationId && messagesLoading)) {
-        return (
-            <div className="flex min-h-svh w-full flex-col">
-                <div className="flex h-14 items-center border-b px-4">
-                    <Skeleton className="h-5 w-40 bg-muted-foreground/30" />
-                </div>
-
-                <div className="flex flex-1 flex-col gap-6 p-6">
-                    <div className="flex justify-end">
-                        <Skeleton className="h-10 w-48 rounded-2xl bg-muted-foreground/30" />
-                    </div>
-
-                    <div className="flex justify-start">
-                        <Skeleton className="h-20 w-3/5 rounded-2xl bg-muted-foreground/30" />
-                    </div>
-
-                    <div className="flex justify-end">
-                        <Skeleton className="h-10 w-64 rounded-2xl bg-muted-foreground/30" />
-                    </div>
-
-                    <div className="flex justify-start">
-                        <Skeleton className="h-24 w-2/3 rounded-2xl bg-muted-foreground/30" />
-                    </div>
-                </div>
-
-                <div className="border-t p-4">
-                    <Skeleton className="h-12 w-full rounded-xl bg-muted-foreground/30" />
-                </div>
-            </div>
-        );
-    }
-
     if (isError || !document) {
         return (
             <div className="flex min-h-svh items-center justify-center">
@@ -174,11 +142,18 @@ const ChatConversation = () => {
                 </div>
             </header>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-                <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
-            </div>
-            <div className="sticky bottom-0 z-50">
-                <ChatInput disabled={isStreaming} onSend={handleSend} />
+            <div className="flex min-h-0 flex-1 flex-col">
+                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                    {isLoading || (routeConversationId && messagesLoading) ? (
+                        <ChatConversationSkeleton />
+                    ) : (
+                        <ChatMessageList messages={messages} streamingContent={streamingContent} isStreaming={isStreaming} />
+                    )}
+                </div>
+
+                <div className="sticky bottom-0 z-50 shrink-0">
+                    <ChatInput disabled={isStreaming} onSend={handleSend} />
+                </div>
             </div>
         </>
     );
