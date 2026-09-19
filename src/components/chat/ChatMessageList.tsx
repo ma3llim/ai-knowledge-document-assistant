@@ -30,19 +30,19 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming, isThinking }
                     );
                 })}
 
-                {/* {isThinking && ( */}
-                <div className="flex justify-start items-center">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <p>AI is generating your response</p>
+                {isThinking && (
+                    <div className="flex justify-start items-center">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <p>AI is generating your response</p>
 
-                        <span className="flex gap-1 mt-1.5 items-center">
-                            <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s] bg-muted-foreground" />
-                            <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s] bg-muted-foreground" />
-                            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" />
-                        </span>
+                            <span className="flex gap-1 mt-1.5 items-center">
+                                <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s] bg-muted-foreground" />
+                                <span className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s] bg-muted-foreground" />
+                                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" />
+                            </span>
+                        </div>
                     </div>
-                </div>
-                {/* )} */}
+                )}
 
                 {isStreaming && streamingContent && (
                     <div className="flex justify-start">
