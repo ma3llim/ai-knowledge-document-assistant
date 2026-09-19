@@ -32,7 +32,7 @@ const ChatMessageList = ({ messages, streamingContent, isStreaming, isThinking }
 
                 {isThinking && (
                     <div className="flex justify-start items-center">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2 text-sm">
                             <p>AI is generating your response</p>
 
                             <span className="flex gap-1 mt-1.5 items-center">
