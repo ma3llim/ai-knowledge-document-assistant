@@ -151,3 +151,107 @@ button {
         transform: translateX(-50%);
     }
 }
+
+@keyframes feature-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes feature-chat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes feature-chat-reply {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(2px);
+    }
+}
+
+@keyframes feature-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+@keyframes feature-node {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.8;
+    }
+}
+
+@keyframes feature-bar {
+
+    0%,
+    100% {
+        opacity: 0.45;
+        transform: scaleX(0.96);
+        transform-origin: left;
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+}
+
+@keyframes feature-memory {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(3px);
+    }
+}
+
+@keyframes feature-memory-reply {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-3px);
+    }
+}
