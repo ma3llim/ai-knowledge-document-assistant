@@ -5,16 +5,27 @@ import VideoShowcase from "@/components/home/VideoShowcase";
 import DocumentIntelligence from "@/components/home/DocumentIntelligence";
 import Footer from "@/components/home/Footer";
 import Features from "@/components/home/Features";
+import { Element } from "react-scroll";
 
 const Home = () => {
     return (
         <>
             <Header />
-            <Hero />
-            <Features />
-            <VideoShowcase />
-            <TrustedTechnology />
-            <DocumentIntelligence />
+            <Element name="hero">
+                <Hero />
+            </Element>
+            <Element name="features">
+                <Features />
+            </Element>
+            <Element name="product-demo">
+                <VideoShowcase />
+            </Element>
+            <Element name="technology">
+                <TrustedTechnology />
+            </Element>
+            <Element name="document-intelligence">
+                <DocumentIntelligence />
+            </Element>
             <Footer />
         </>
     );
