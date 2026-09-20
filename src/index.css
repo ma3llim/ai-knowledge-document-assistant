@@ -255,3 +255,27 @@ button {
         transform: translateX(-3px);
     }
 }
+
+@keyframes pipeline-transfer {
+    0% {
+        transform: translate(-50%, -120%);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, 120%);
+        opacity: 0;
+    }
+}
+
+.pipeline-transfer {
+    animation: pipeline-transfer 2.8s linear infinite;
+}
