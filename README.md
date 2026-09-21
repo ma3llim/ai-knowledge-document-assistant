@@ -1,92 +1,159 @@
-# AI Knowledge Document Assistant
+# AI Knowledge & Document Assistant
 
-A modern and responsive **AI-powered Document Intelligence frontend** built with React and TypeScript.
+A modern **AI Knowledge & Document Assistant frontend** built with React and TypeScript.
 
 The application enables users to upload their documents, explore their knowledge base through natural-language conversations, and receive intelligent, context-aware answers grounded in their own content.
 
 ## Overview
 
-The AI Knowledge Document Assistant provides a clean and intuitive interface for interacting with personal documents through an AI-powered conversational experience.
+The frontend is designed as a responsive single-page application that communicates with the backend through REST APIs and WebSocket connections.
 
-Users can upload and manage documents, select documents for conversations, ask questions in natural language, and receive real-time AI responses through a responsive chat interface.
+It provides the user interface for:
+
+- Authentication
+- Document management
+- Conversations
+- AI chat
+- Real-time response streaming
+- Source/citation presentation
+- Application navigation
 
 ## Features
 
 - Google OAuth authentication
-- Document upload and management
-- Support for PDF, DOCX, XLSX, PPTX, CSV, TXT, and Markdown documents
-- Document selection for conversations
-- Natural-language document conversations
-- Real-time AI response streaming
-- Conversation history
-- Responsive chat interface
-- Document status and processing indicators
-- Loading and error states
-- Responsive design for desktop and mobile devices
-- Reusable and accessible UI components
+- Protected application routes
+- Document upload and document management
+- Document processing status display
+- Conversation management
+- Chat interface with message history
+- Real-time AI response streaming using WebSocket
+- WebSocket connection lifecycle management
+- Document and source citation display
+- Loading and skeleton states
+- Form validation
+- API error handling
+- Client-side state management
+- Server-state caching and synchronization
+- Responsive layout for different screen sizes
 
 ## Technology Stack
 
 - **Language:** TypeScript
 - **Framework:** React
 - **Build Tool:** Vite
-- **Routing:** React Router
 - **State Management:** Redux Toolkit
 - **Server State:** TanStack React Query
-- **Form Management:** React Hook Form
-- **Validation:** Zod
+- **Routing:** React Router
 - **Styling:** Tailwind CSS v4
 - **UI Components:** shadcn/ui
-- **Icons:** Lucide React & React Icons
-- **API Communication:** Axios
+- **Form Management:** React Hook Form
+- **Validation:** Zod
+- **HTTP Client:** Axios
 - **Real-Time Communication:** WebSocket
+- **UI Icons:** Lucide React
+- **Package Manager:** npm
+
+## Architecture
+
+The frontend follows a feature-oriented React architecture.
+
+```text
+                         Frontend
+                            │
+             ┌──────────────┼──────────────┐
+             │              │              │
+            Auth          Chat         Conversation
+             │              │              │
+             └──────────────┼──────────────┘
+                            │
+                    React Components
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+         REST API                     WebSocket
+              │                           │
+              ▼                           ▼
+       Axios / React Query          WebSocket Manager
+              │                           │
+              └─────────────┬─────────────┘
+                            │
+                            ▼
+                         Backend
+```
 
 ## Installation
 
-1. **Clone the Repository**
+### 1. Clone the Repository
 
-    ```bash
-    git clone https://github.com/ma3llim/ai-knowledge-document-assistant
-    cd <frontend-project>
-    ```
+```bash
+git clone https://github.com/ma3llim/ai-knowledge-document-assistant
+cd ai-knowledge-document-assistant
+```
 
-2. **Install Dependencies**
+### 2. Install Dependencies
 
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
-3. **Set Up Environment Variables**
+### 3. Set Up Environment Variables
 
-    ```bash
-    cp .env.example .env
-    ```
+```bash
+cp .env.example .env
+```
 
-    On Windows:
+On Windows:
 
-    ```powershell
-    Copy-Item .env.example .env
-    ```
+```powershell
+Copy-Item .env.example .env
+```
 
-    Update the `.env` file with the required application configuration.
+Update the `.env` file with the required application configuration.
 
-4. **Start the Development Server**
+### 4. Start the Development Server
 
-    ```bash
-    npm run dev
-    ```
+```bash
+npm run dev
+```
 
-5. **Access the Application**
+The application will be available through the Vite development server.
 
-    The frontend will be available at:
+### 5. Build for Production
 
-    ```text
-    http://localhost:5173
-    ```
+```bash
+npm run build
+```
+
+The production build will be generated in the `dist` directory.
 
 ## Deployment
 
-The frontend is deployed independently using Cloudflare.
+The frontend is built as a static Vite application.
+
+```text
+                         Internet
+                            │
+                            ▼
+                     Frontend Hosting
+                            │
+                            ▼
+                    React Static Build
+                            │
+                 ┌──────────┴──────────┐
+                 │                     │
+                 ▼                     ▼
+             REST API              WebSocket
+                 │                     │
+                 └──────────┬──────────┘
+                            ▼
+                     Spring Boot Backend
+```
+
+The production frontend uses environment-specific API and WebSocket endpoints to communicate with the deployed backend.
+
+## CI/CD
+
+The frontend deployment can be automated through GitHub Actions.
 
 ```text
 Developer
@@ -95,35 +162,39 @@ Developer
 GitHub
     │
     ▼
-Cloudflare
+GitHub Actions
+    │
+    ├── Install Dependencies
+    ├── Build
+    └── Production Checks
     │
     ▼
-E-Commerce Frontend
+Production Build
     │
-    │ HTTPS / REST API
     ▼
-E-Commerce Backend
-
-The backend is deployed separately on AWS EC2.
+Frontend Hosting - Cloudflare
+    │
+    ▼
+Deployment Complete
 ```
 
 ## License
 
-This project is licensed under the MIT License.
+This project is developed for **educational, portfolio, and demonstration purposes**.
 
-See the [LICENSE](LICENSE) file for the complete license terms.
+See the [LICENSE](LICENSE) file in the repository for the applicable license terms.
 
 ## Acknowledgements
 
-1. **React:** Component-based frontend development and user interface architecture.
-2. **TypeScript:** Type-safe application development.
-3. **Vite:** Fast frontend development and build tooling.
-4. **React Router:** Client-side routing and navigation.
-5. **Redux Toolkit:** Application state management.
-6. **TanStack React Query:** Server-state management, caching, and data synchronization.
-7. **React Hook Form:** Form state management.
-8. **Zod:** Schema validation.
-9. **Tailwind CSS:** Utility-first styling and responsive design.
-10. **shadcn/ui:** Reusable and accessible UI components.
-11. **Lucide React:** Interface icons.
-12. **React Icons:** Technology and application icons.
+- **React:** Component-based frontend application development.
+- **TypeScript:** Type-safe application development.
+- **Vite:** Fast frontend development and production build tooling.
+- **Redux Toolkit:** Application state management.
+- **TanStack React Query:** Server-state management and caching.
+- **React Router:** Client-side routing.
+- **Tailwind CSS:** Utility-first styling.
+- **shadcn/ui:** Reusable and accessible UI components.
+- **React Hook Form:** Form state management.
+- **Zod:** Runtime schema validation.
+- **Axios:** HTTP client for REST API communication.
+- **WebSocket:** Real-time communication for AI response streaming.
