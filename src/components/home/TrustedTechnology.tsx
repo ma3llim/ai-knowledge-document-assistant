@@ -1,17 +1,7 @@
 import { SiReact, SiTypescript, SiRedux, SiTanstack, SiSpringboot, SiSpring, SiPostgresql, SiCloudflare } from "react-icons/si";
 import { FaJava } from "react-icons/fa";
-import {
-    TbVector,
-    TbBrain,
-    TbSearch,
-    TbArrowsSort,
-    TbShieldCheck,
-    TbPlugConnected,
-    TbActivityHeartbeat,
-    TbFunction,
-    TbRoute,
-    TbMessageCircle,
-} from "react-icons/tb";
+import { TbVector, TbBrain, TbSearch, TbArrowsSort, TbShieldCheck, TbPlugConnected, TbMessageCircle, TbTransfer } from "react-icons/tb";
+import { Server } from "lucide-react";
 
 const technologies = [
     { name: "React", icon: SiReact },
@@ -29,10 +19,9 @@ const technologies = [
     { name: "Reranking", icon: TbArrowsSort },
     { name: "Guardrails", icon: TbShieldCheck },
     { name: "WebSocket", icon: TbPlugConnected },
-    { name: "Streaming", icon: TbActivityHeartbeat },
+    { name: "Streaming", icon: TbTransfer },
     { name: "AWS SQS", icon: TbMessageCircle },
-    { name: "AWS Lambda", icon: TbFunction },
-    { name: "API Gateway", icon: TbRoute },
+    { name: "AWS EC2", icon: Server },
     { name: "Cloudflare R2", icon: SiCloudflare },
 ];
 
