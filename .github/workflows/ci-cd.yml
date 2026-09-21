@@ -1,0 +1,46 @@
+name: AI Knowledge Document Assistant
+
+on:
+    push:
+        branches:
+            - master
+
+permissions:
+    contents: read
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Scan for secrets
+              uses: gitleaks/gitleaks-action@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "24"
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Check formatting
+              run: npm run format:check
+
+            - name: Build application
+              run: npm run build
+              env:
+                  VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+                  VITE_WEBSOCKET_URL: ${{ vars.VITE_WEBSOCKET_URL }}
+
+            - name: Deploy to Cloudflare Pages
+              run: npx wrangler pages deploy dist --project-name ai-knowledge-document-assistant
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
