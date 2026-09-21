@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Link as LinkScroll } from "react-scroll";
 
 const Hero = () => {
     return (
@@ -37,13 +38,16 @@ const Hero = () => {
                         </button>
                     </Link>
 
-                    <a
-                        href="#product-demo"
-                        className="inline-flex h-12 items-center justify-center rounded-lg border border-landing-border bg-landing-surface/60 px-7 text-sm font-medium text-landing-foreground backdrop-blur-md transition-all duration-200 hover:border-landing-primary/30 hover:bg-landing-panel"
+                    <LinkScroll
+                        to="document-intelligence"
+                        smooth
+                        duration={800}
+                        offset={-48}
+                        className="inline-flex h-12 items-center justify-center rounded-lg border border-landing-border bg-landing-surface/60 px-7 text-sm font-medium text-landing-foreground backdrop-blur-md transition-all duration-200 hover:border-landing-primary/30 hover:bg-landing-panel cursor-pointer"
                     >
                         See how it works
                         <span className="ml-2 text-landing-muted">↓</span>
-                    </a>
+                    </LinkScroll>
                 </div>
 
                 <div className="mt-7 flex items-center gap-2 text-xs text-landing-muted/60">
