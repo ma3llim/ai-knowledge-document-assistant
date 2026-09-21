@@ -154,7 +154,6 @@ button {
 }
 
 @keyframes feature-float {
-
     0%,
     100% {
         transform: translateY(0);
@@ -166,7 +165,6 @@ button {
 }
 
 @keyframes feature-chat {
-
     0%,
     100% {
         transform: translateY(0);
@@ -178,7 +176,6 @@ button {
 }
 
 @keyframes feature-chat-reply {
-
     0%,
     100% {
         transform: translateY(0);
@@ -190,7 +187,6 @@ button {
 }
 
 @keyframes feature-pulse {
-
     0%,
     100% {
         transform: scale(1);
@@ -204,7 +200,6 @@ button {
 }
 
 @keyframes feature-node {
-
     0%,
     100% {
         transform: scale(1);
@@ -218,7 +213,6 @@ button {
 }
 
 @keyframes feature-bar {
-
     0%,
     100% {
         opacity: 0.45;
@@ -234,7 +228,6 @@ button {
 }
 
 @keyframes feature-memory {
-
     0%,
     100% {
         transform: translateX(0);
@@ -246,7 +239,6 @@ button {
 }
 
 @keyframes feature-memory-reply {
-
     0%,
     100% {
         transform: translateX(0);
