@@ -84,6 +84,29 @@ Users can upload and manage documents, select documents for conversations, ask q
     http://localhost:5173
     ```
 
+## Deployment
+
+The frontend is deployed independently using Cloudflare.
+
+```text
+Developer
+    │
+    ▼
+GitHub
+    │
+    ▼
+Cloudflare
+    │
+    ▼
+E-Commerce Frontend
+    │
+    │ HTTPS / REST API
+    ▼
+E-Commerce Backend
+
+The backend is deployed separately on AWS EC2.
+```
+
 ## License
 
 This project is licensed under the MIT License.
