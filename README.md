@@ -1,73 +1,106 @@
-# React + TypeScript + Vite
+# AI Knowledge Document Assistant
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and responsive **AI-powered Document Intelligence frontend** built with React and TypeScript.
 
-Currently, two official plugins are available:
+The application enables users to upload their documents, explore their knowledge base through natural-language conversations, and receive intelligent, context-aware answers grounded in their own content.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Overview
 
-## React Compiler
+The AI Knowledge Document Assistant provides a clean and intuitive interface for interacting with personal documents through an AI-powered conversational experience.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Users can upload and manage documents, select documents for conversations, ask questions in natural language, and receive real-time AI responses through a responsive chat interface.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Google OAuth authentication
+- Document upload and management
+- Support for PDF, DOCX, XLSX, PPTX, CSV, TXT, and Markdown documents
+- Document selection for conversations
+- Natural-language document conversations
+- Real-time AI response streaming
+- Conversation history
+- Responsive chat interface
+- Document status and processing indicators
+- Loading and error states
+- Responsive design for desktop and mobile devices
+- Reusable and accessible UI components
 
-```js
-export default defineConfig([
-    globalIgnores(["dist"]),
-    {
-        files: ["**/*.{ts,tsx}"],
-        extends: [
-            // Other configs...
+## Technology Stack
 
-            // Remove tseslint.configs.recommended and replace with this
-            tseslint.configs.recommendedTypeChecked,
-            // Alternatively, use this for stricter rules
-            tseslint.configs.strictTypeChecked,
-            // Optionally, add this for stylistic rules
-            tseslint.configs.stylisticTypeChecked,
+- **Language:** TypeScript
+- **Framework:** React
+- **Build Tool:** Vite
+- **Routing:** React Router
+- **State Management:** Redux Toolkit
+- **Server State:** TanStack React Query
+- **Form Management:** React Hook Form
+- **Validation:** Zod
+- **Styling:** Tailwind CSS v4
+- **UI Components:** shadcn/ui
+- **Icons:** Lucide React & React Icons
+- **API Communication:** Axios
+- **Real-Time Communication:** WebSocket
 
-            // Other configs...
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-]);
-```
+## Installation
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+1. **Clone the Repository**
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+    ```bash
+    git clone https://github.com/ma3llim/ai-knowledge-document-assistant
+    cd <frontend-project>
+    ```
 
-export default defineConfig([
-    globalIgnores(["dist"]),
-    {
-        files: ["**/*.{ts,tsx}"],
-        extends: [
-            // Other configs...
-            // Enable lint rules for React
-            reactX.configs["recommended-typescript"],
-            // Enable lint rules for React DOM
-            reactDom.configs.recommended,
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-]);
-```
+2. **Install Dependencies**
+
+    ```bash
+    npm install
+    ```
+
+3. **Set Up Environment Variables**
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    On Windows:
+
+    ```powershell
+    Copy-Item .env.example .env
+    ```
+
+    Update the `.env` file with the required application configuration.
+
+4. **Start the Development Server**
+
+    ```bash
+    npm run dev
+    ```
+
+5. **Access the Application**
+
+    The frontend will be available at:
+
+    ```text
+    http://localhost:5173
+    ```
+
+## License
+
+This project is licensed under the MIT License.
+
+See the [LICENSE](LICENSE) file for the complete license terms.
+
+## Acknowledgements
+
+1. **React:** Component-based frontend development and user interface architecture.
+2. **TypeScript:** Type-safe application development.
+3. **Vite:** Fast frontend development and build tooling.
+4. **React Router:** Client-side routing and navigation.
+5. **Redux Toolkit:** Application state management.
+6. **TanStack React Query:** Server-state management, caching, and data synchronization.
+7. **React Hook Form:** Form state management.
+8. **Zod:** Schema validation.
+9. **Tailwind CSS:** Utility-first styling and responsive design.
+10. **shadcn/ui:** Reusable and accessible UI components.
+11. **Lucide React:** Interface icons.
+12. **React Icons:** Technology and application icons.
