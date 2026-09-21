@@ -23,6 +23,7 @@ It provides the user interface for:
 - Google OAuth authentication
 - Protected application routes
 - Document upload and document management
+- Support for PDF, DOCX, XLSX, PPTX, CSV, TXT, and Markdown documents
 - Document processing status display
 - Conversation management
 - Chat interface with message history
