@@ -135,7 +135,7 @@ The frontend is built as a static Vite application.
                          Internet
                             │
                             ▼
-                     Frontend Hosting
+                        Cloudflare
                             │
                             ▼
                     React Static Build
@@ -173,7 +173,7 @@ GitHub Actions
 Production Build
     │
     ▼
-Frontend Hosting - Cloudflare
+Cloudflare
     │
     ▼
 Deployment Complete
