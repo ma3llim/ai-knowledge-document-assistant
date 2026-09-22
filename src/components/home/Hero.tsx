@@ -20,7 +20,7 @@ const Hero = () => {
                 <h1 className="max-w-5xl text-balance text-5xl font-semibold leading-[0.96] tracking-[-0.055em] text-landing-foreground sm:text-6xl lg:text-7xl">
                     Turn your documents
                     <br />
-                    <span className="text-landing-primary">into intelligent conversations.</span>
+                    <span className="mt-2 inline-block text-landing-primary">into intelligent conversations.</span>
                 </h1>
 
                 <p className="mt-8 max-w-2xl text-pretty text-base leading-7 text-landing-muted sm:text-lg">
